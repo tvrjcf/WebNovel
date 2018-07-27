@@ -56,7 +56,7 @@ namespace WebBookManage.Common
                 bool isUrl = Regex.IsMatch(str, Url);
                 return isUrl;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

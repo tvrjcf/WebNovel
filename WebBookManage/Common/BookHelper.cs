@@ -62,7 +62,7 @@ namespace WebBookManage.Common
                         maxid = Convert.ToInt32(dtMax.Rows[0][0].Value);
                         maxid++;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         maxid = 0;
                     }
@@ -126,7 +126,7 @@ namespace WebBookManage.Common
                         maxid = Convert.ToInt32(dtMax.Rows[0][0].Value);
                         maxid++;
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         maxid = 0;
                     }
@@ -268,7 +268,7 @@ namespace WebBookManage.Common
             var dt = GetNovelContents(novelId);
             if (dt != null && dt.Rows.Count > 0)
             {
-                for (int i = list.Count - 1, j = 0; i >= 0; i--)
+                for (int i = list.Count - 1, j = 0; i >= j; i--)
                 {
                     if (dt.FindRow(string.Format("ComeFrom = '{0}'", list[i].ComeFrom)) != null)
                     {
@@ -716,7 +716,7 @@ namespace WebBookManage.Common
                 case EbookType.UMD:
                 case EbookType.PDF:
                     throw new ValidationException("暂未支持该功能");
-                    break;
+                    //break;
                 default:
                     break;
             }

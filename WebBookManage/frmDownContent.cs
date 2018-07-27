@@ -1,4 +1,6 @@
 ﻿using CYQ.Data.Table;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Taskbar;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +15,7 @@ namespace WebBookManage
     {
         #region 属性定义
         private BookHelper BH = new BookHelper();
-        private List<Thread> threadList;
+        //private List<Thread> threadList;
         //新建ManualResetEvent对象并且初始化为无信号状态
         //ManualResetEvent eventX = new ManualResetEvent(false);
         private Novel novel;
@@ -23,15 +25,16 @@ namespace WebBookManage
         //private int SuccessCount = 0;
         //private int ErrorCount = 0;
         private int CompletedCount = 0;
-        object lockObj = new object();
-        bool IsGetCompleted = false;    //全部待下列表已取出
-        bool IsDownCompleted = true;   //全部列表已下载完成
-        bool IsBreak = false;  //停止标识
-        bool IsClose = false;   //关闭窗体
-        bool SkipExist = true;  //自动跳过已下载过章节
-        string chaptermodel = string.Empty;
-        string listmodel = string.Empty;
+        private object lockObj = new object();
+        //private bool IsGetCompleted = false;    //全部待下列表已取出
+        private bool IsDownCompleted = true;   //全部列表已下载完成
+        private bool IsBreak = false;  //停止标识
+        private bool IsClose = false;   //关闭窗体
+        private bool SkipExist = true;  //自动跳过已下载过章节
+        private string chaptermodel = string.Empty;
+        private string listmodel = string.Empty;
         #endregion
+        private TaskbarManager taskbar = TaskbarManager.Instance;
 
         #region 窗体加载事件
 
@@ -45,6 +48,7 @@ namespace WebBookManage
         }
         private void frmDownContent_Load(object sender, EventArgs e)
         {
+            taskbar.SetProgressState(TaskbarProgressBarState.Indeterminate);
             this.dvList.AutoGenerateColumns = false;
             BindData();
         }
@@ -77,7 +81,7 @@ namespace WebBookManage
                 }
                 else
                 {
-                    IsGetCompleted = true;
+                    //IsGetCompleted = true;
                     currMenu = null;
                 }
                 Console.WriteLine(string.Format("取章节-> {0}-{1}", currMenu?.Id, currMenu?.Title));
@@ -187,7 +191,7 @@ namespace WebBookManage
             //SuccessCount = 0;
             //ErrorCount = 0;
             CompletedCount = 0;
-            IsGetCompleted = false;
+            //IsGetCompleted = false;
             IsDownCompleted = false;
             IsBreak = false;
             btnDownLoadSelect.Enabled = false;
@@ -236,6 +240,7 @@ namespace WebBookManage
                 }
                 //MessageBox.Show(arg2, "提示");
             }
+            taskbar.SetProgressValue(CompletedCount, waitinglist.Count);
         }
         #endregion
 

@@ -9,7 +9,7 @@ namespace WebBookManage
     public partial class frmDownMenuList : Form
     {
         private BookHelper BH = new BookHelper();
-        private Novel novel;
+        //private Novel novel;
         private string novelId;
         private List<NovelContent> menulist;
         private bool IsSave = false;

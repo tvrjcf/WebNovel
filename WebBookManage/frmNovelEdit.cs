@@ -9,7 +9,7 @@ namespace WebBookManage
     public partial class frmNovelEdit : Form
     {
         private BookHelper BH = new BookHelper();
-        private MDataTable dt;//和表格同一引用，用于批量操作表格内容。
+        //private MDataTable dt;//和表格同一引用，用于批量操作表格内容。
         public string NovelId = "0";
         public frmMain frmMain = null;
         public frmNovelEdit(frmMain form = null, string novelId = "0")

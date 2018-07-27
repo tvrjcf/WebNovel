@@ -68,7 +68,7 @@ namespace WebBookManage
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return "0";
             }
@@ -95,7 +95,7 @@ namespace WebBookManage
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return "0";
             }

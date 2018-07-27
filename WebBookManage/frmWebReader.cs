@@ -21,7 +21,7 @@ namespace WebBookManage
 
         private void frmWebReader_Load(object sender, EventArgs e)
         {
-            var html = CommonHelper.LoadHtmlFile(@"chm\000050\list.htm");
+            var html = CommonHelper.LoadHtmlFile(@"chm\000046\list.htm");
             wbReader.DocumentText = html;
         }
     }
