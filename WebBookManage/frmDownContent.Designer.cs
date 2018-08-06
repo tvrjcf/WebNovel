@@ -35,6 +35,7 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.btnDownLoadSelect = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
+            this.btnSelectRepeat = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -48,7 +49,7 @@
             this.Title = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Volume = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ComeFrom = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btnSelectRepeat = new System.Windows.Forms.Button();
+            this.btnArrange = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dvList)).BeginInit();
             this.SuspendLayout();
@@ -58,6 +59,7 @@
             this.groupBox1.Controls.Add(this.ckbSkip);
             this.groupBox1.Controls.Add(this.pbComplete);
             this.groupBox1.Controls.Add(this.btnStop);
+            this.groupBox1.Controls.Add(this.btnArrange);
             this.groupBox1.Controls.Add(this.btnDownLoadSelect);
             this.groupBox1.Controls.Add(this.btnStart);
             this.groupBox1.Controls.Add(this.btnSelectRepeat);
@@ -80,7 +82,7 @@
             this.ckbSkip.AutoSize = true;
             this.ckbSkip.Checked = true;
             this.ckbSkip.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckbSkip.Location = new System.Drawing.Point(626, 246);
+            this.ckbSkip.Location = new System.Drawing.Point(626, 262);
             this.ckbSkip.Name = "ckbSkip";
             this.ckbSkip.Size = new System.Drawing.Size(72, 16);
             this.ckbSkip.TabIndex = 8;
@@ -124,6 +126,16 @@
             this.btnStart.Text = "下载全部";
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            // 
+            // btnSelectRepeat
+            // 
+            this.btnSelectRepeat.Location = new System.Drawing.Point(624, 101);
+            this.btnSelectRepeat.Name = "btnSelectRepeat";
+            this.btnSelectRepeat.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectRepeat.TabIndex = 4;
+            this.btnSelectRepeat.Text = "选择重复";
+            this.btnSelectRepeat.UseVisualStyleBackColor = true;
+            this.btnSelectRepeat.Click += new System.EventHandler(this.btnSelectRepeat_Click);
             // 
             // btnDelete
             // 
@@ -243,15 +255,15 @@
             this.ComeFrom.Name = "ComeFrom";
             this.ComeFrom.Width = 400;
             // 
-            // btnSelectRepeat
+            // btnArrange
             // 
-            this.btnSelectRepeat.Location = new System.Drawing.Point(624, 101);
-            this.btnSelectRepeat.Name = "btnSelectRepeat";
-            this.btnSelectRepeat.Size = new System.Drawing.Size(75, 23);
-            this.btnSelectRepeat.TabIndex = 4;
-            this.btnSelectRepeat.Text = "选择重复";
-            this.btnSelectRepeat.UseVisualStyleBackColor = true;
-            this.btnSelectRepeat.Click += new System.EventHandler(this.btnSelectRepeat_Click);
+            this.btnArrange.Location = new System.Drawing.Point(623, 198);
+            this.btnArrange.Name = "btnArrange";
+            this.btnArrange.Size = new System.Drawing.Size(75, 23);
+            this.btnArrange.TabIndex = 6;
+            this.btnArrange.Text = "整理目录";
+            this.btnArrange.UseVisualStyleBackColor = true;
+            this.btnArrange.Click += new System.EventHandler(this.btnArrange_Click);
             // 
             // frmDownContent
             // 
@@ -295,5 +307,6 @@
         private System.Windows.Forms.CheckBox ckbSkip;
         private System.Windows.Forms.Button btnDownLoadSelect;
         private System.Windows.Forms.Button btnSelectRepeat;
+        private System.Windows.Forms.Button btnArrange;
     }
 }

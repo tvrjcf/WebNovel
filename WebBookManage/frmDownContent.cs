@@ -19,9 +19,9 @@ namespace WebBookManage
         //新建ManualResetEvent对象并且初始化为无信号状态
         //ManualResetEvent eventX = new ManualResetEvent(false);
         private Novel novel;
-        private List<NovelContent> menulist;    //章节列表
-        private List<NovelContent> successlist;    //已下载列表
-        private List<NovelContent> waitinglist;     //待下载列表
+        private List<NovelContent> menuList;    //章节列表
+        private List<NovelContent> successList;    //已下载列表
+        private List<NovelContent> waitingList;     //待下载列表
         //private int SuccessCount = 0;
         //private int ErrorCount = 0;
         private int CompletedCount = 0;
@@ -31,8 +31,8 @@ namespace WebBookManage
         private bool IsBreak = false;  //停止标识
         private bool IsClose = false;   //关闭窗体
         private bool SkipExist = true;  //自动跳过已下载过章节
-        private string chaptermodel = string.Empty;
-        private string listmodel = string.Empty;
+        private string chapterModel = string.Empty;
+        private string listModel = string.Empty;
         #endregion
         private TaskbarManager taskbar = TaskbarManager.Instance;
 
@@ -43,7 +43,7 @@ namespace WebBookManage
             InitializeComponent();
             DoubleBufferDataGridView.DoubleBufferedDataGirdView(dvList, true);
             novel = _novel;
-            menulist = _list;
+            menuList = _list;
             //downLoadlist = _list.ToList();
         }
         private void frmDownContent_Load(object sender, EventArgs e)
@@ -58,7 +58,7 @@ namespace WebBookManage
 
         private void BindData()
         {
-            var BList = new BindingList<NovelContent>(menulist);
+            var BList = new BindingList<NovelContent>(menuList);
             dvList.DataSource = BList;
             dvList.ClearSelection();
         }
@@ -74,10 +74,10 @@ namespace WebBookManage
             lock (lockObj)
             {
                 NovelContent currMenu = null;
-                if (waitinglist.Count > 0)
+                if (waitingList.Count > 0)
                 {
-                    currMenu = waitinglist[0];
-                    waitinglist.RemoveAt(0);
+                    currMenu = waitingList[0];
+                    waitingList.RemoveAt(0);
                 }
                 else
                 {
@@ -101,17 +101,17 @@ namespace WebBookManage
                 if (IsBreak)
                 {
                     //eventX.Set();
-                    Console.WriteLine(string.Format("下载中止-> {0}//{1} - <<{2}>>", menulist.Count, CompletedCount, menu.Title));
+                    Console.WriteLine(string.Format("下载中止-> {0}//{1} - <<{2}>>", menuList.Count, CompletedCount, menu.Title));
                 }
                 else
                 {
-                    var prior = BH.GetPrior(menulist, menu.Id);
-                    var next = BH.GetNext(menulist, menu.Id);
-                    var result = BH.SaveNovelContentToHtml(novel, ref menu, chaptermodel, prior, next, SkipExist);
+                    var prior = BH.GetPrior(menuList, menu.Id);
+                    var next = BH.GetNext(menuList, menu.Id);
+                    var result = BH.SaveNovelContentToHtml(novel, ref menu, chapterModel, prior, next, SkipExist);
                     Console.WriteLine(result);
                     lock (lockObj)
                     {
-                        successlist.Add(menu);
+                        successList.Add(menu);
                     }
                     this.Invoke(new EventHandler(delegate { UpdateResult(menu.Id, string.Format("已下载 {0}", menu.Title, Thread.CurrentThread.Name)); }));
                     //this.Invoke(new Action<int, string>(UpdateResult), menu.Id, string.Format("已下载 {0}", menu.Title, Thread.CurrentThread.Name));
@@ -137,18 +137,18 @@ namespace WebBookManage
         /// <param name="menu"></param>
         private void CompleteEvent(NovelContent menu)
         {
-            if (!IsDownCompleted && (waitinglist.Count == CompletedCount))
+            if (!IsDownCompleted && (waitingList.Count == CompletedCount))
             {
                 IsDownCompleted = true;
-                Console.WriteLine(string.Format("下载完成-> {0}//{1}", waitinglist.Count, CompletedCount));
+                Console.WriteLine(string.Format("下载完成-> {0}//{1}", waitingList.Count, CompletedCount));
 
-                if (successlist.Count > 0)
+                if (successList.Count > 0)
                 {
                     //更新已下载的章节
-                    var dt = MDataTable.CreateFrom(successlist);
-                    dt.TableName = successlist[0].TableName;
+                    var dt = MDataTable.CreateFrom(successList);
+                    dt.TableName = successList[0].TableName;
                     dt.AcceptChanges(AcceptOp.Update);
-                    Console.WriteLine(string.Format("更新保存-> {0}//{1}", successlist.Count, CompletedCount));
+                    Console.WriteLine(string.Format("更新保存-> {0}//{1}", successList.Count, CompletedCount));
                     this.Invoke(new EventHandler(delegate { UpdateResult(menu.Id, string.Format("更新保存 {0}", menu.Title, Thread.CurrentThread.Name)); }));
                     //this.Invoke(new Action<int, string>(UpdateResult), menu.Id, string.Format("更新保存 {0}", menu.Title, Thread.CurrentThread.Name));
                     //eventX.Set();
@@ -171,9 +171,9 @@ namespace WebBookManage
             if (MessageBox.Show("是否生成章节目录?", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
                 CommonHelper.CreateDirectory(string.Format(@"chm\{0}", novel.NovelID));
-                listmodel = BH.GetMenuListModel();
+                listModel = BH.GetMenuListModel();
 
-                BH.SaveNovelListToHtml(novel, menulist, listmodel);
+                BH.SaveNovelListToHtml(novel, menuList, listModel);
                 if (MessageBox.Show("章节目录生成完成,是否继续下载章节内容?", "提示", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                 {
                     return;
@@ -184,9 +184,9 @@ namespace WebBookManage
 
             #region 下载并生成章节内容
 
-            waitinglist = list;
-            successlist = new List<NovelContent>();
-            pbComplete.Maximum = waitinglist.Count;
+            waitingList = list;
+            successList = new List<NovelContent>();
+            pbComplete.Maximum = waitingList.Count;
             pbComplete.Value = 0;
             //SuccessCount = 0;
             //ErrorCount = 0;
@@ -199,18 +199,18 @@ namespace WebBookManage
             btnStop.Enabled = true;
             SkipExist = ckbSkip.Checked;
             //eventX.Reset();
-            chaptermodel = BH.GetChapterModel();
+            chapterModel = BH.GetChapterModel();
 
             ThreadPool.SetMinThreads(1, 1);
             ThreadPool.SetMaxThreads(5, 10);
-            for (int i = 0, j = waitinglist.Count; i < j; i++)
+            for (int i = 0, j = waitingList.Count; i < j; i++)
             {
                 //int nWorkThreads;
                 //int nCompletionPortThreads;
                 //ThreadPool.GetAvailableThreads(out nWorkThreads,out nCompletionPortThreads);
                 //Console.WriteLine(nWorkThreads.ToString() + "   " + nCompletionPortThreads.ToString()); //默认都是1000
                 if (!IsBreak)
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(DownLoad), waitinglist[i]);
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(DownLoad), waitingList[i]);
             }
 
             #endregion
@@ -240,7 +240,7 @@ namespace WebBookManage
                 }
                 //MessageBox.Show(arg2, "提示");
             }
-            taskbar.SetProgressValue(CompletedCount, waitinglist.Count);
+            taskbar.SetProgressValue(CompletedCount, waitingList.Count);
         }
         #endregion
 
@@ -260,7 +260,7 @@ namespace WebBookManage
                 }
                 if (ids.Count > 0)
                 {
-                    var list = menulist.FindAll(p => ids.Contains(p.Id));
+                    var list = menuList.FindAll(p => ids.Contains(p.Id));
                     StartDownLoad(list);
                 }
             }
@@ -269,11 +269,11 @@ namespace WebBookManage
         {
             if (this.ckbSkip.Checked)
             {
-                var list = menulist.FindAll(p => !BH.IsDownLoad(novel.NovelID, p.Id));
+                var list = menuList.FindAll(p => !BH.IsDownLoad(novel.NovelID, p.Id));
                 StartDownLoad(list);
             }
             else
-                StartDownLoad(menulist);
+                StartDownLoad(menuList);
         }
         private void btnDelete_Click(object sender, EventArgs e)
         {
@@ -317,7 +317,7 @@ namespace WebBookManage
             var repeatList = new List<NovelContent>();
             var repeatIndexList = new List<int>();
             int i = 0;
-            foreach (var item in menulist)
+            foreach (var item in menuList)
             {
                 if (!dicList.ContainsKey(item.ComeFrom))
                 {
@@ -339,6 +339,34 @@ namespace WebBookManage
                 }
                 dvList.FirstDisplayedScrollingRowIndex = repeatIndexList[0];
             }
+        }
+        private void btnArrange_Click(object sender, EventArgs e)
+        {
+            btnArrange.Enabled = false;
+            new Thread(() =>
+            {
+                this.Invoke(new EventHandler(delegate
+                {
+                    this.lbTip.Text = string.Format("正在整理...");// "开始整理...";
+                }));
+                var list = BH.GetExceptionList(menuList);
+                
+                //foreach (var item in list)
+                //{
+                //    this.Invoke(new EventHandler(delegate
+                //    {
+                //        this.lbTip.Text = string.Format("正在整理-> {0}", item.Title);// "开始整理...";
+                //    }));
+                //    //Console.WriteLine(string.Format("异常章节-> {0}", item.Title));
+                //}
+                this.Invoke(new EventHandler(delegate
+                {
+                    btnArrange.Enabled = true;
+                    this.lbTip.Text = string.Format("整理完成，共整理 {0} 章节", list.Count);
+                    MessageBox.Show(string.Format("整理完成，共整理 {0} 章节", list.Count));
+                }));
+            }).Start();
+            
         }
         #endregion
 
@@ -364,5 +392,6 @@ namespace WebBookManage
             btnDownLoadSelect.Text = string.Format("{0}({1})", "下载", dvList.SelectedRows.Count);
             btnDelete.Text = string.Format("{0}({1})", "删除", dvList.SelectedRows.Count);
         }
+
     }
 }

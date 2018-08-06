@@ -686,6 +686,39 @@ namespace WebBookManage.Common
         }
 
         /// <summary>
+        /// 查询异常章节列表
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public List<NovelContent> GetExceptionList(List<NovelContent> list)
+        {
+            var exlist = new List<NovelContent>();
+            if (list.Count <= 2) return exlist;//排除首尾（无需调整）章节
+            for (int i = 1, j = list.Count - 1; i < j; i++)
+            {
+                var menu = list[i];
+                var prior = GetPrior(list, menu.Id);
+                var next = GetNext(list, menu.Id);
+                string fileName = string.Format(FILE_PATH_CHAPTER_MODEL, menu.NovelID, menu.Id);
+                var content = CommonHelper.LoadHtmlFile(fileName);
+                if (content.Contains("if (event.keyCode==37) document.location= \"List.htm\"")
+                    || content.Contains("if (event.keyCode==39) document.location= \"List.htm\""))
+                {
+                    exlist.Add(menu);
+                    CommonHelper.SaveToFile(
+                    fileName,
+                    content
+                    .Replace("if (event.keyCode==37) document.location= \"List.htm\"", string.Format("if (event.keyCode==37) document.location= \"{0}.htm\"", prior == null ? "List" : prior.Id.ToString()))
+                    .Replace("if (event.keyCode==39) document.location= \"List.htm\"", string.Format("if (event.keyCode==39) document.location= \"{0}.htm\"", next == null ? "List" : next.Id.ToString()))
+                    .Replace("<a href=\"List.htm\" target=\"_top\">上一页</a>", string.Format("<a href=\"{0}.htm\" target=\"_top\">上一页</a>", prior == null ? "List" : prior.Id.ToString()))
+                    .Replace("<a href=\"List.htm\" target=\"_top\">下一页</a>", string.Format("<a href=\"{0}.htm\" target=\"_top\">下一页</a>", next == null ? "List" : next.Id.ToString()))
+                    );
+                }
+            }
+            return exlist;
+        }
+
+        /// <summary>
         /// 判断章节是否已下载存在
         /// </summary>
         /// <param name="menuId"></param>
@@ -716,7 +749,7 @@ namespace WebBookManage.Common
                 case EbookType.UMD:
                 case EbookType.PDF:
                     throw new ValidationException("暂未支持该功能");
-                    //break;
+                //break;
                 default:
                     break;
             }
