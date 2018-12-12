@@ -52,7 +52,7 @@ namespace WebBookManage.Common
         public int GetNovelMaxId()
         {
             int maxid = 0;
-            using (MAction actionMax = new MAction("select max(NovelID) as max from " + T_Novel))
+            using (MAction actionMax = new MAction("select max(NovelID) as [maxId] from " + T_Novel))
             {
                 var dtMax = actionMax.Select();
                 if (dtMax != null && dtMax.Rows.Count > 0)
@@ -116,7 +116,7 @@ namespace WebBookManage.Common
         public int GetNovelContentMaxId()
         {
             int maxid = 0;
-            using (MAction actionMax = new MAction("select max(ID) as max from " + T_NovelContent))
+            using (MAction actionMax = new MAction("select max(ID) as [maxId] from " + T_NovelContent))
             {
                 var dtMax = actionMax.Select();
                 if (dtMax != null && dtMax.Rows.Count > 0)
@@ -156,8 +156,12 @@ namespace WebBookManage.Common
         {
             using (MAction action = new MAction(T_NovelContent))
             {
-                string strIds = string.Join("','", ids.ConvertAll(p => p.ToString()).ToArray());
-                return action.Delete(string.Format("ID in ('{0}')", strIds));
+                //string strIds = string.Join("','", ids.ConvertAll(p => p.ToString()).ToArray());    //MS SQL
+                //var del = action.Delete(string.Format("ID in ('{0}')", strIds));  //MS SQL
+                string strIds = string.Join(",", ids.ConvertAll(p => p.ToString()).ToArray());    //Access
+                var del = action.Delete(string.Format("ID in ({0})", strIds));  //Access
+                if (!del) throw new ValidationException(action.DebugInfo);
+                return del;
             }
         }
         /// <summary>

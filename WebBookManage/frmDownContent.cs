@@ -49,6 +49,7 @@ namespace WebBookManage
         private void frmDownContent_Load(object sender, EventArgs e)
         {
             taskbar.SetProgressState(TaskbarProgressBarState.Indeterminate);
+            taskbar.SetProgressValue(0, 0);
             this.dvList.AutoGenerateColumns = false;
             BindData();
         }

@@ -93,6 +93,10 @@ namespace WebBookManage
                             if (frmMain != null)
                                 frmMain.RefreshEditRow(action.Data);
                         }
+                        else
+                        {
+                            throw new ValidationException(action.DebugInfo);
+                        }
                         LoadData(NovelId);
                     }
                 }
