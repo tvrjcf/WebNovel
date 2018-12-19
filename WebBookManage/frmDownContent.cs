@@ -385,6 +385,7 @@ namespace WebBookManage
                 }
                 e.Cancel = true;
             }
+            taskbar.SetProgressState(TaskbarProgressBarState.NoProgress);
         }
         #endregion
 
