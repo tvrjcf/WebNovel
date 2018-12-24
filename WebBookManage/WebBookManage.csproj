@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WebBookManage</RootNamespace>
-    <AssemblyName>Spider</AssemblyName>
+    <AssemblyName>BM</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -2435,7 +2435,45 @@
     <None Include="Resources\textfield_rename.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\chm\20150504083221.jpg" />
+    <Content Include="lib\chm\autobookmark.txt" />
+    <Content Include="lib\chm\bookmark.gif" />
+    <Content Include="lib\chm\head.js" />
+    <Content Include="lib\chm\index.htm" />
+    <Content Include="lib\chm\nocover.gif" />
+    <Content Include="lib\chm\QBlog-IIS.exe" />
+    <Content Include="lib\chm\style.css" />
+    <Content Include="lib\chm\temp.htm" />
+    <Content Include="lib\chm\tmpstyle.css" />
+    <Content Include="lib\chm\underline.gif" />
+    <Content Include="lib\chm\WEB服务器V3.0.exe" />
+    <Content Include="lib\CYQ.Data.dll" />
+    <Content Include="lib\CYQ.Data.pdb" />
+    <Content Include="lib\CYQ.Data.xml" />
+    <Content Include="lib\Microsoft.WindowsAPICodePack.dll" />
+    <Content Include="lib\Microsoft.WindowsAPICodePack.Shell.dll" />
+    <Content Include="lib\Microsoft.WindowsAPICodePack.Shell.xml" />
+    <Content Include="lib\Microsoft.WindowsAPICodePack.xml" />
+    <Content Include="lib\pim.mdb" />
+    <Content Include="lib\usermodel\古色古香\1.jpg" />
+    <Content Include="lib\usermodel\古色古香\2.jpg" />
+    <Content Include="lib\usermodel\古色古香\3.jpg" />
+    <Content Include="lib\usermodel\古色古香\4.jpg" />
+    <Content Include="lib\usermodel\古色古香\chaptermodel.htm" />
+    <Content Include="lib\usermodel\古色古香\listmodel.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="lib\usermodel\素白\1.jpg" />
+    <Content Include="lib\usermodel\素白\2.jpg" />
+    <Content Include="lib\usermodel\素白\3.jpg" />
+    <Content Include="lib\usermodel\素白\4.jpg" />
+    <Content Include="lib\usermodel\素白\chaptermodel.htm" />
+    <Content Include="lib\usermodel\素白\listmodel.htm" />
+    <Content Include="lib\usermodel\素白\temp.htm" />
     <Content Include="seo_optimization.ico" />
+    <Content Include="sitesign.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="virus.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -2449,6 +2487,10 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="lib\Logs\" />
+    <Folder Include="lib\txt\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

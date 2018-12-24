@@ -1,0 +1,237 @@
+﻿<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="applicable-device" content="pc" />
+    <title>阅读</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <link rel="shortcut icon" href="./res/favicon.ico?a7500236" />
+    <link type="text/css" rel="stylesheet" href="./res/style.css" />
+    <!-- <link type="text/css" rel="stylesheet" href="./res/indexx.css" />  -->
+    <link type="text/css" rel="stylesheet" href="./res/book.css" />
+    <script src="../js/jquery.js"></script>
+    <script>
+        var bookTypes = [];
+        var books = [];
+        function GetBooks() {
+            bookTypes = JSON.parse(GetNovelTypes());
+            books = JSON.parse(GetNovels());
+
+            //alert(books);
+            //document.write(books.rows[0].NovelName);
+            $("#bookType").html("");
+
+            $("#bookType").append("<div class=\"nav-item\" key = 'all'><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>全部</a></div>");
+            $(bookTypes).each(function (i, item) {
+                $("#bookType").append("<div class=\"nav-item\" key = " + item.DM + "><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>" + item.MC + "</a></div>");
+            });
+            $(".nav-item").bind("click", function () {
+                //alert($(this).attr("key"));
+                BindBook($(this).attr("key"));
+            });
+
+            BindBook("all");
+        }
+        function BindBook(bookType) {
+
+            $("#bookList").html("");
+            $(books).each(function (i, item) {
+                if (bookType != "all" && item.LB != bookType) return true;
+
+                var bookTpl = "<div class='yd-book-item yd-book-item-pull-left '>";
+                if ((i + 1) % 2 == 0) bookTpl = "<div class='yd-book-item yd-book-item-pull-left  edge-right'>";
+                bookTpl += "<a href = '..\\..\\chm\\" + item.NovelID + "\\List.htm' > <img src='./res/Default.png' alt='" + item.NovelName + "' class='pull-left cover-container' width='90' height='120' /> <h2>" + item.NovelName + "</h2> </a>";
+                //bookTpl += "<a href = '#' target = '_blank' onclick = 'OpenBook(" + item.NovelID +")'> <img src='./res/Default.png' alt='" + item.NovelName + "' class='pull-left cover-container' width='114' height='160' /> <h2>" + item.NovelName + "</h2> </a>";
+                bookTpl += "<div class='author-container'>";
+                bookTpl += "            <dl class='dl-horizontal-inline'>";
+                bookTpl += "                <dt>作者：</dt>";
+                bookTpl += "                <dd>" + item.Author || "" + "</dd>";
+                bookTpl += "            </dl>";
+                bookTpl += "        </div>";
+                //bookTpl += "    < div class='rate w-star w-star1' > ";
+                //bookTpl += "    <span>& nbsp;</span > ";
+                //bookTpl += "    <span>& nbsp;</span > ";
+                //bookTpl += "    <span>& nbsp;</span > ";
+                //bookTpl += "    <span>& nbsp;</span > ";
+                //bookTpl += "    <span class='no' >& nbsp;</span > ";
+                //bookTpl += "    </div> ";
+                //bookTpl += "    <div class='price-container f-invi' > <b class='price'> ￥9.90 </b>";
+                //bookTpl += "        </div> ";
+                bookTpl += "    <div class='summery'> ";
+                bookTpl += "    <p>简介：" + item.Brief + "</p> ";
+                bookTpl += "    </div > ";
+                bookTpl += "<div class='badge badge-complete png' ></div > ";
+                bookTpl += "</div >";
+                $("#bookList").append(bookTpl);
+            });
+        }
+
+        $(document).ready(function () {
+            //alert("OK");
+            GetBooks();
+        });
+    </script>
+</head>
+<!--设置margin才能显示阴影-->
+<body style="margin:8px;">
+
+    <!--<a href="../../chm/000051\List.htm">List</a>-->
+    <div class="g-doc">
+        <div class="g-bdw g-bdw-1">
+            <div class="g-bd yd-grid2col-page">
+                <div class="g-bdc yd-book-page yd-book-store-page">
+                    <div class="g-sd" data-spy="affix" data-offset-top="187">
+                        <div class="nav-list-container">
+                            <ul>
+                                <li>
+                                    <div class="nav-header nav-header-first grad-1">
+                                        <a class="nav-title" href="#">分类</a>
+                                    </div>
+                                    <ul class="nav-list">
+                                        <li class="has-sub" id="bookType">
+                                            <div class="nav-item"><a href="#"><span class="icon nav-toggle-trigger"></span>言情小说</a></div>
+                                            <div class="nav-item">
+                                                <a href="#"><span class="icon nav-toggle-trigger"></span>青春文学</a>
+                                            </div>
+                                            <div class="nav-item">
+                                                <a href="#"><span class="icon nav-toggle-trigger"></span>穿越架空</a>
+                                            </div>
+                                            <div class="nav-item">
+                                                <a href="#"><span class="icon nav-toggle-trigger"></span>悬疑推理</a>
+                                            </div>
+                                            <div class="nav-item">
+                                                <a href="#"><span class="icon nav-toggle-trigger"></span>恐怖惊悚</a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="g-mn">
+                        <div class="g-mnc">
+                            <div class="nav-list-container">
+                                <div class="nav-header nav-header-first grad-1">
+                                    <a class="nav-title" href="#">书籍</a>
+                                </div>
+                                <div id="bookList" class="yd-book-content yd-book-content-standalone yd-store-content-container clearfix">
+                                    <div class="yd-book-item yd-book-item-pull-left">
+                                        <a href="#" target="_blank"> <img src="./res/Default.png" alt="人山人海里，你不必记得我" class="pull-left cover-container" width="114" height="160" /> <h2>人山人海里，你不必记得我</h2> </a>
+                                        <div class="author-container">
+                                            <dl class="dl-horizontal-inline">
+                                                <dt>
+                                                    作者：
+                                                </dt>
+                                                <dd>
+                                                    金浩森
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                        <div class="rate w-star w-star1">
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span class="no">&nbsp;</span>
+                                        </div>
+                                        <div class="price-container f-invi">
+                                            <b class="price"> ￥9.90 </b>
+                                        </div>
+                                        <div class="summery">
+                                            <p>《人山人海里，你不必记得我》是金浩森在七年沉淀后的内心之作。十篇异国旅途日记、十个国家的写真及摄影作品，描述出这些年在旅行路上对生活的反思，以及收获到对世界的认知。同时，通过对自我的发问，写给六个“你”的真诚书信，全书以文字作品、个人写真、摄影作品的立体形式，呈现了一段褪去浮躁与复杂、归于简单与纯真的成长路途。我想一直这样走下去，去看世界上所有的魅力与孤独，无论在哪里，做什么样的事情，只要能和喜欢的人在一起。</p>
+                                        </div>
+                                        <div class="badge badge-complete png"></div>
+                                    </div>
+                                    <div class="yd-book-item yd-book-item-pull-left edge-right">
+                                        <a href="#" target="_blank"> <img src="./res/Default.png" alt="自控力：和压力做朋友" class="pull-left cover-container" width="114" height="160" /> <h2>自控力：和压力做朋友</h2> </a>
+                                        <div class="author-container">
+                                            <dl class="dl-horizontal-inline">
+                                                <dt>
+                                                    作者：
+                                                </dt>
+                                                <dd>
+                                                    【美】凯利&middot;麦格尼格尔
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                        <div class="rate w-star w-star1">
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                        </div>
+                                        <div class="price-container f-invi">
+                                            <b class="price"> ￥19.90 </b>
+                                        </div>
+                                        <div class="summery">
+                                            <p>作为一名健康心理学家，凯利&middot;麦格尼格尔博士的工作就是帮助人们管理压力，并在生活中做出积极的改变。多年来，通过观察学生们是如何控制选择的，她意识到，人们关于自控的很多看法实际上妨碍了我们取得成功。麦格尼格尔吸收了心理学、神经学和经济学等学科的最新洞见，为斯坦福大学继续教育项目开设了一门叫做“意志力科学”的课程，参与过这门课程的人称其能够“改变一生”。这门课程就是《自控力》一书的基础。本书为读者提供了清晰的框架，讲述了什么是自控力，自控力如何发生作用，以及为何自控力如此重要。本书以“在压力下好好生活”课程为基础，目的是转化人们的思考方式，与压力共舞，善用压力，过上有意义的生活。</p>
+                                        </div>
+                                        <div class="badge badge-complete png"></div>
+                                    </div>
+                                    <div class="yd-book-item yd-book-item-pull-left">
+                                        <a href="#" target="_blank"> <img src="./res/Default.png" alt="性学三论" class="pull-left cover-container" width="114" height="160" /> <h2>性学三论</h2> </a>
+                                        <div class="author-container">
+                                            <dl class="dl-horizontal-inline">
+                                                <dt>
+                                                    作者：
+                                                </dt>
+                                                <dd>
+                                                    【奥地利】西格蒙德&middot;弗洛伊德
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                        <div class="rate w-star w-star1">
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span class="no">&nbsp;</span>
+                                        </div>
+                                        <div class="price-container f-invi">
+                                            <b class="price"> ￥9.99 </b>
+                                        </div>
+                                        <div class="summery">
+                                            <p>这本弗洛伊德著作中罕有的直白、易读的作品，于1905年首次出版，一经问世就受到保守“禁欲主义”之抨击，被斥为“大逆不道”。但作为一部真诚、造福于人的科学著作，其伟大并不会因此黯淡！在这之后的二十余年中，《性学三论》再版四次，直接启蒙了整个现代西方社会对“性”的看法和认知，至今仍为全世界人提供参考和帮助。</p>
+                                        </div>
+                                        <div class="badge badge-complete png"></div>
+                                    </div>
+                                    <div class="yd-book-item yd-book-item-pull-left edge-right">
+                                        <a href="#" target="_blank"> <img src="./res/Default.png" alt="中国人的生活智慧" class="pull-left cover-container" width="114" height="160" /> <h2>中国人的生活智慧</h2> </a>
+                                        <div class="author-container">
+                                            <dl class="dl-horizontal-inline">
+                                                <dt>
+                                                    作者：
+                                                </dt>
+                                                <dd>
+                                                    林语堂
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                        <div class="rate w-star w-star1">
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span>&nbsp;</span>
+                                            <span class="no">&nbsp;</span>
+                                        </div>
+                                        <div class="price-container f-invi">
+                                            <b class="price"> 免费 </b>
+                                        </div>
+                                        <div class="summery">
+                                            <p>《中国人的生活智慧》是林语堂在中西方文坛的成名作之一，大师以主人翁意识向世界展现着中国及其勤劳而朴实的子民，他用特有的手法和笔调广泛而深入地描绘了国人的生存状态，并从文化、历史、社会和环境等角度进行了全面的分析与研究，《中国人的生活智慧》将从独特的角度完整呈现华夏大地的风物人文和民族性格。</p>
+                                        </div>
+                                        <div class="badge badge-complete png"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

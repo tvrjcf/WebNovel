@@ -1,0 +1,36 @@
+﻿<html>
+<head>
+    <meta charset="GBK">
+    <title>
+        测试页面
+    </title>
+    <script src="js/jquery.js"></script>
+    <script>
+        //TEST("-------" + Date.parse(new Date()))
+        //Console_WriteLine("测试调用后台方法" + Date.parse(new Date()))
+        //ApiTest("-------" + Date.parse(new Date()))
+        function GetBooks() {
+            var books = JSON.parse(GetNovels());;
+
+            //alert(books);
+            //document.write(books.rows[0].NovelName);
+            $("#list").html("");
+            $(books.rows).each(function (i, book) {
+                $("#list").append("<div id='" + book.NovelID +"'>" + book.NovelName+"</div>")
+            });
+        }
+        $(document).ready(function () {
+            alert("OK");
+        });
+    </script>
+</head>
+<!--设置margin才能显示阴影-->
+<body style="margin:8px;">
+    <div>
+        <input type="button" id="btn" value="GetBooks" onclick="GetBooks()" />
+    </div>
+    <div id="list">
+
+    </div>
+</body>
+</html>

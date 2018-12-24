@@ -349,7 +349,7 @@ namespace WebBookManage.Common
         {
             var list = new List<SiteSign>();
             XHtmlAction xml = new XHtmlAction();
-            if (xml.Load(@"SiteSign2.xml"))
+            if (xml.Load(@"SiteSign.xml"))
             {
                 var nodeList = xml.GetList("SiteSign");
                 foreach (XmlNode item in nodeList)
@@ -445,7 +445,7 @@ namespace WebBookManage.Common
             XmlNode oldNode = null;
             XmlNode newNode = null;
             var xml = new XmlDocument();
-            xml.Load(@"SiteSign2.xml");
+            xml.Load(@"SiteSign.xml");
             {
                 var root = xml.DocumentElement;
 
@@ -475,7 +475,7 @@ namespace WebBookManage.Common
                     root.InsertBefore(newNode, root.ChildNodes[0]);
                 else
                     root.ReplaceChild(newNode, oldNode);
-                xml.Save(@"SiteSign2.xml");
+                xml.Save(@"SiteSign.xml");
             }
 
             return newNode;
