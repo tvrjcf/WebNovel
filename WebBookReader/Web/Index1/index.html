@@ -15,10 +15,12 @@
         var bookTypes = [];
         var books = [];
         function GetBooks() {
+            //alert(GetNovelTypes())
             bookTypes = JSON.parse(GetNovelTypes());
+            //alert(bookTypes);
+            //document.write(GetNovels())
             books = JSON.parse(GetNovels());
-
-            //alert(books);
+            //alert(GetNovels());
             //document.write(books.rows[0].NovelName);
             $("#bookType").html("");
 
@@ -68,15 +70,28 @@
         }
 
         $(document).ready(function () {
+            $(".windowclose").bind('mousedown', function () {
+                QuitApp();
+            });
+            $("#minwindow").bind('mousedown', function () {
+                MinWindow();
+            });
+            $("#windowbar").bind('mousedown', function () {
+                DragWindow();
+            });
             //alert("OK");
             GetBooks();
         });
     </script>
 </head>
 <!--设置margin才能显示阴影-->
-<body style="margin:8px;">
-
-    <!--<a href="../../chm/000051\List.htm">List</a>-->
+<body style="margin:0px;">
+    <div id="windowbar">
+        <span>BookReader</span>
+        <div class="windowclose"><img src="./images/close.png"></div>
+        <div id="minwindow"><img src="./images/min.png"></div>
+    </div>
+    <!--<a href="../../chm/000051/List.htm">List</a>-->
     <div class="g-doc">
         <div class="g-bdw g-bdw-1">
             <div class="g-bd yd-grid2col-page">
@@ -227,11 +242,11 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
+
         </div>
-
     </div>
-
 </body>
 </html>
