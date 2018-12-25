@@ -1,6 +1,7 @@
 ﻿using CYQ.Data.Table;
 using CYQ.Data.Tool;
 using MiniBlinkPinvoke;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,6 +34,14 @@ namespace WebBookReader.Web
         public string GetNovels()
         {
             var data = BH.GetNovels().ToJson(false, false).Replace("null", "\"\"");
+            return data;
+        }
+
+        [JSFunctin]
+        public string UpdateNovel(string novelId)
+        {
+            var list = BH.DownMenuList(novelId);
+            var data = JsonHelper.ToJson(list);// JsonConvert.SerializeObject(list).Replace("null", "\"\"");
             return data;
         }
 

@@ -48,14 +48,14 @@ namespace Canvas
             ltf.BindUserFunction("QuitApp", QuitAppFun, 0);
             ltf.BindUserFunction("MinWindow", MinWindowFun, 0);
             
-            LTFApiHelper api = new LTFApiHelper(ltf);
+            LTFApiHelper ApiHelper = new LTFApiHelper(ltf);
             ltf.BindUserFunction("f1", f1Fun, 0);
             ltf.BindUserFunction("f2", f2Fun, 0);
             ltf.BindUserFunction("f3", f3Fun, 0);
             ltf.BindUserFunction("f4", f4Fun, 0);
             ltf.BindUserFunction("f5", f5Fun, 1);
-            ltf.BindUserFunction("GetNovelTypes", GetNovelTypes, 0);
-            ltf.BindUserFunction("GetNovels", GetNovels, 0);
+            ltf.BindUserFunction("GetNovelTypes", ApiHelper.GetNovelTypes, 0);
+            ltf.BindUserFunction("GetNovels", ApiHelper.GetNovels, 0);
             //ltf.loadFile(Lib.GetAppPath + @"./template/javascript.html");
             ltf.loadFile(Lib.GetAppPath + ConfigurationManager.AppSettings["Web.index"].ToString());
             ltf.EnableDragFrameChangeSize(false);

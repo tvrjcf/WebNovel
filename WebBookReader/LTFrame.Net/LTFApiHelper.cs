@@ -11,10 +11,14 @@ namespace LTFrameNet
     public class LTFApiHelper
     {
         BookHelper BH = null;
-        public LTFrameNetClass ltf;
+        public LTFrameNetClass ltf = null;
+        string josnNovelTypes = string.Empty;
+        string josnNovels = string.Empty;
         public LTFApiHelper(LTFrameNetClass _ltf) {
             BH = new BookHelper();
             ltf = _ltf;
+            //josnNovelTypes = GetNovelTypes();
+            //josnNovels = GetNovels();
         }
 
         public void ApiTest(string msg)
@@ -24,7 +28,8 @@ namespace LTFrameNet
 
         public long GetNovelTypes(IntPtr es)
         {
-            var data = BH.GetNovelTypes().ToJson(false, false).Replace("null", "\"\"");
+            BH.GetNovelTypes();
+            var data = josnNovelTypes;
             return ltf.String2JsValue(es, data);
         }
         public string GetNovelTypes()
@@ -35,12 +40,7 @@ namespace LTFrameNet
 
         public long GetNovels(IntPtr es)
         {
-            var dt = BH.GetNovels();
-            for (int i = dt.Rows.Count - 1; i > 1; i--)
-            {
-                dt.Rows.RemoveAt(i);
-            }
-            var data = dt.ToJson(false, false).Replace("null", "\"\"");
+            var data = josnNovels;
             return ltf.String2JsValue(es, data);
         }
         public string GetNovels()
