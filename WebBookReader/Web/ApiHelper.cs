@@ -12,7 +12,7 @@ namespace WebBookReader.Web
 {
     public class ApiHelper
     {
-        BookHelper BH = null; 
+        BookHelper BH = null;
         public ApiHelper() {
             BH = new BookHelper();
         }
@@ -40,9 +40,22 @@ namespace WebBookReader.Web
         [JSFunctin]
         public string UpdateNovel(string novelId)
         {
-            var list = BH.DownMenuList(novelId);
-            var data = JsonHelper.ToJson(list);// JsonConvert.SerializeObject(list).Replace("null", "\"\"");
-            return data;
+            var result = new Result();
+            try
+            {
+                var list = BH.DownMenuList(novelId);
+                var data = JsonHelper.ToJson(list);// JsonConvert.SerializeObject(list).Replace("null", "\"\"");
+                result.Success = true;
+                result.Data = data;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.GetBaseException().Message;
+            }
+            //var jsonData = JsonHelper.ToJson(result);
+            var jsonData = JsonConvert.SerializeObject(result);
+            return jsonData;
         }
 
         public string GetBookListHtml() {
@@ -76,5 +89,11 @@ namespace WebBookReader.Web
 
             return html;
         }
+    }
+
+    public class Result{
+        public bool Success = false;
+        public string Message = string.Empty;
+        public object Data = false;
     }
 }

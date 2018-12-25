@@ -241,6 +241,8 @@ namespace WebBookManage.Common
             {
                 return new List<NovelContent>();
             }
+            if (novel.ListStart == null || novel.ListEnd == null)
+                throw new ValidationException("请维护目录匹配规则");
             Console.WriteLine("->正在连接目录...");
             string html = CommonHelper.GetHtml(novel.ListUrl);
 

@@ -61,13 +61,13 @@
                     </div>
                     <div class="g-mn">
                         <div class="g-mnc">
-                            <div class="nav-list-container"><div id="msg">消息提示</div>
+                            <div class="nav-list-container">
                                 <div class="nav-header nav-header-first grad-1">
                                     <a class="nav-title" href="#">书籍</a>
                                 </div>
                                 <div id="bookList" class="yd-book-content yd-book-content-standalone yd-store-content-container clearfix">
                                     <div class="yd-book-item yd-book-item-pull-left">
-                                        <button class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='0001'><i class='layui-icon'>&#xe669;</i></button>
+                                        <button class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='000051'><i class='layui-icon'>&#xe669;</i></button>
                                         <a href="#" target="_blank"> <img src="./res/Default.png" alt="人山人海里，你不必记得我" class="pull-left cover-container" width='90' height='120' /> <h2>人山人海里，你不必记得我</h2> </a>
                                         <div class="author-container">
                                             <dl class="dl-horizontal-inline">
@@ -95,7 +95,7 @@
                                         <div class="badge badge-complete png"></div>
                                     </div>
                                     <div class="yd-book-item yd-book-item-pull-left edge-right">
-                                        <button class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='0001'><i class='layui-icon'>&#xe669;</i></button>
+                                        <button class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='000049'><i class='layui-icon'>&#xe669;</i></button>
                                         <a href="#" target="_blank"> <img src="./res/Default.png" alt="自控力：和压力做朋友" class="pull-left cover-container" width='90' height='120' /> <h2>自控力：和压力做朋友</h2> </a>
                                         <div class="author-container">
                                             <dl class="dl-horizontal-inline">
@@ -123,7 +123,7 @@
                                         <div class="badge badge-complete png"></div>
                                     </div>
                                     <div class="yd-book-item yd-book-item-pull-left">
-                                        <button class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='0001'><i class='layui-icon'>&#xe669;</i></button>
+                                        <button class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='000051'><i class='layui-icon'>&#xe669;</i></button>
                                         <a href="#" target="_blank"> <img src="./res/Default.png" alt="性学三论" class="pull-left cover-container" width='90' height='120' /> <h2>性学三论</h2> </a>
                                         <div class="author-container">
                                             <dl class="dl-horizontal-inline">
@@ -212,58 +212,71 @@
             //alert(GetNovelTypes())
             bookTypes = JSON.parse(GetNovelTypes());
             //alert(bookTypes);
-            //document.write(GetNovels())
-            books = JSON.parse(GetNovels());
-            //alert(GetNovels());
-            //document.write(books.rows[0].NovelName);
             $("#bookType").html("");
-
             $("#bookType").append("<div class=\"nav-item\" key = 'all'><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>全部</a></div>");
             $(bookTypes).each(function (i, item) {
-                $("#bookType").append("<div class=\"nav-item\" key = " + item.DM + "><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>" + item.MC + "</a></div>");
+                $("#bookType").append("<div class=\"nav-item\" key = '" + item.DM + "'><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>" + item.MC + "(" + item.DM + ")</a></div>");
             });
             $(".nav-item").bind("click", function () {
                 //alert($(this).attr("key"));
-                BindBook($(this).attr("key"));
+                //BindBook($(this).attr("key"));
+                var key = $(this).attr("key");
+                $(".book").each(function (i, item) {
+                    if (key == "all") {
+                        $(item).show();
+                    } else { 
+                        if ($(item).attr("key") != key)
+                            $(item).hide();
+                        else
+                            $(item).show();
+                    }
+                });
             });
 
+            books = JSON.parse(GetNovels());
+            //alert(GetNovels());
             BindBook("all");
         }
         function BindBook(bookType) {
-
             $("#bookList").html("");
+            var content = "";
             $(books).each(function (i, item) {
-                if (bookType != "all" && item.LB != bookType) return true;
+                //if (bookType != "all" && item.LB != bookType) return true;
 
-                var bookTpl = "<div class='yd-book-item yd-book-item-pull-left '>";
-                if ((i + 1) % 2 == 0) bookTpl = "<div class='yd-book-item yd-book-item-pull-left  edge-right'>";
-                bookTpl += "<button class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='" + item.NovelID + "'><i class='layui-icon'>&#xe669;</i></button>";
-                bookTpl += "<a href = '..\\..\\chm\\" + item.NovelID + "\\List.htm' > <img src='./res/Default.png' alt='" + item.NovelName + "' class='pull-left cover-container' width='90' height='120' /> <h2>" + item.NovelName + "</h2> </a>";
+                var bookTpl = "<div class='yd-book-item yd-book-item-pull-left book' key='" + item.LB + "'>";
+                if ((i + 1) % 2 == 0) bookTpl = "<div class='yd-book-item yd-book-item-pull-left edge-right book' key='" + item.LB + "'>";
+                bookTpl += "<button id='book_" + item.NovelID +"' class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='" + item.NovelID + "'><i class='layui-icon'>&#xe669;</i></button>";
+                bookTpl += "    <a href = '..\\..\\chm\\" + item.NovelID + "\\List.htm' > <img src='./res/Default.png' alt='" + item.NovelName + "' class='pull-left cover-container' width='90' height='120' /> <h2>(" + item.LB + ")" + item.NovelName + "</h2> </a>";
                 //bookTpl += "<a href = '#' target = '_blank' onclick = 'OpenBook(" + item.NovelID +")'> <img src='./res/Default.png' alt='" + item.NovelName + "' class='pull-left cover-container' width='114' height='160' /> <h2>" + item.NovelName + "</h2> </a>";
-                bookTpl += "<div class='author-container'>";
-                bookTpl += "            <dl class='dl-horizontal-inline'>";
-                bookTpl += "                <dt>作者：</dt>";
-                bookTpl += "                <dd>" + item.Author || "" + "</dd>";
-                bookTpl += "            </dl>";
-                bookTpl += "        </div>";
-                //bookTpl += "    < div class='rate w-star w-star1' > ";
-                //bookTpl += "    <span>& nbsp;</span > ";
-                //bookTpl += "    <span>& nbsp;</span > ";
-                //bookTpl += "    <span>& nbsp;</span > ";
-                //bookTpl += "    <span>& nbsp;</span > ";
-                //bookTpl += "    <span class='no' >& nbsp;</span > ";
-                //bookTpl += "    </div> ";
-                //bookTpl += "    <div class='price-container f-invi' > <b class='price'> ￥9.90 </b>";
-                //bookTpl += "        </div> ";
-                bookTpl += "    <div class='summery'> ";
-                bookTpl += "    <p>简介：" + item.Brief + "</p> ";
-                bookTpl += "    </div > ";
-                bookTpl += "<div class='badge badge-complete png' ></div > ";
+                bookTpl += "    <div class='author-container'>";
+                bookTpl += "        <dl class='dl-horizontal-inline'>";
+                bookTpl += "            <dt>作者：</dt>";
+                bookTpl += "            <dd>" + item.Author + "</dd>";
+                bookTpl += "        </dl>";
+                bookTpl += "    </div>";
+                bookTpl += "    <div class='rate w-star w-star1'> ";
+                bookTpl += "        <span>&nbsp;</span > ";
+                bookTpl += "        <span>&nbsp;</span > ";
+                bookTpl += "        <span>&nbsp;</span > ";
+                bookTpl += "        <span>&nbsp;</span > ";
+                bookTpl += "        <span class='no' >&nbsp;</span> ";
+                bookTpl += "    </div> ";
+                bookTpl += "    <div class='price-container f-invi'>";
+                bookTpl += "        < b class='price' > ￥9.90 </b> ";
+                bookTpl += "    </div> ";
+                //bookTpl += "    <div class='summery'> ";
+                //bookTpl += "    <p>简介：" + "" + "</p> "; //item.Brief
+                //bookTpl += "    </div > ";
+                bookTpl += "    <div class='badge badge-complete png' ></div > ";
                 bookTpl += "</div >";
-                $("#bookList").append(bookTpl);
+
+                content += bookTpl;
             });
+            $("#bookList").append(content);
         }
-        
+        function Alert(msg) {
+            layer.alert(msg, { offset: '100px' });
+        }
         $(document).ready(function () {
             $(".windowclose").bind('mousedown', function () {
                 QuitApp();
@@ -277,20 +290,27 @@
             GetBooks();
             $(".updatebook").on("click", function () {
                 var key = $(this).attr("key");
-                alert(key);
-                layer.open({
-                    type: 2,
-                    area: ['700px', '450px'],
-                    fixed: false, //不固定
-                    maxmin: true,
-                    content: 'index.html'
-                });
-                //layer.alert(key, { icon: 6 });
-                //var updateList = JSON.parse(UpdateNovel(key));;
-                //if (updateList.length == 0)
-                //    layer.msg("没有要更新的内容");
-                //else
-                //    layer.msg("更新数:" + updateList.length);
+                //alert(key);
+                //layer.open({
+                //    type: 2,
+                //    area: ['700px', '450px'],
+                //    fixed: false, //不固定
+                //    maxmin: true,
+                //    content: 'index.html'
+                //});
+                //Alert();
+                var result = JSON.parse(UpdateNovel(key));
+                if (!result.Success) { Alert(result.Message); return; }
+                var updateList = JSON.parse(result.Data);
+                if (updateList.length == 0)
+                    layer.msg("没有要更新的内容", { offset: 't' });
+                    //layer.tips('没有要更新的内容', "#book_" + key);
+                else
+                    layer.confirm("发现有章节更新[" + updateList.length + "], 是否进行同步?",
+                        { offset: '100px', title: '章节更新', icon: 3 },
+                        function (index) { },
+                        function (index) { layer.close(index); }
+                    );
             });
         });
     </script>

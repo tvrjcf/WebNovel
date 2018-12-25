@@ -39,6 +39,8 @@ namespace WebBookManage.Common
         /// <returns></returns> 
         public static string GetValue(string str, string s, string e)
         {
+            if(s == null) s = "";
+            if (e == null) e = "";
             Regex rg = new Regex("(?<=(" + s.Replace("\r", "") + "))[.\\s\\S]*?(?=(" + e.Replace("\r", "") + "))", RegexOptions.Multiline | RegexOptions.Singleline);
             return rg.Match(str).Value;
         }
