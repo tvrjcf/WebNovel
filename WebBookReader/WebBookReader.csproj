@@ -129,7 +129,21 @@
     <None Include="Web\layui\font\iconfont.woff" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="favicon.ico" />
+    <Content Include="favicon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\chm\20150504083221.jpg" />
+    <Content Include="Lib\chm\autobookmark.txt" />
+    <Content Include="Lib\chm\bookmark.gif" />
+    <Content Include="Lib\chm\head.js" />
+    <Content Include="Lib\chm\index.htm" />
+    <Content Include="Lib\chm\nocover.gif" />
+    <Content Include="Lib\chm\QBlog-IIS.exe" />
+    <Content Include="Lib\chm\style.css" />
+    <Content Include="Lib\chm\temp.htm" />
+    <Content Include="Lib\chm\tmpstyle.css" />
+    <Content Include="Lib\chm\underline.gif" />
+    <Content Include="Lib\chm\WEB服务器V3.0.exe" />
     <Content Include="Lib\CYQ.Data.dll" />
     <Content Include="Lib\LTFrame.dll" />
     <Content Include="Lib\MiniBlink.dll" />
@@ -147,6 +161,24 @@
     <Content Include="Lib\net45\Newtonsoft.Json.xml" />
     <Content Include="Lib\node.dll" />
     <Content Include="db\pim.mdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\usermodel\古色古香\1.jpg" />
+    <Content Include="Lib\usermodel\古色古香\2.jpg" />
+    <Content Include="Lib\usermodel\古色古香\3.jpg" />
+    <Content Include="Lib\usermodel\古色古香\4.jpg" />
+    <Content Include="Lib\usermodel\古色古香\chaptermodel.htm" />
+    <Content Include="Lib\usermodel\古色古香\listmodel.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Lib\usermodel\素白\1.jpg" />
+    <Content Include="Lib\usermodel\素白\2.jpg" />
+    <Content Include="Lib\usermodel\素白\3.jpg" />
+    <Content Include="Lib\usermodel\素白\4.jpg" />
+    <Content Include="Lib\usermodel\素白\chaptermodel.htm" />
+    <Content Include="Lib\usermodel\素白\listmodel.htm" />
+    <Content Include="Lib\usermodel\素白\temp.htm" />
+    <Content Include="Web\images\Default.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Web\Index1\downloadbook.html" />
@@ -187,6 +219,9 @@
     <Content Include="Web\Index1\res\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Web\js\main.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web\js\jquery.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -194,6 +229,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Web\js\book.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Web\layui\css\xadmin.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Web\layui\css\layui.css" />
@@ -279,6 +317,9 @@
     <Content Include="Web\layui\images\face\71.gif" />
     <Content Include="Web\layui\images\face\8.gif" />
     <Content Include="Web\layui\images\face\9.gif" />
+    <Content Include="Web\main.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web\layui\layui.all.js" />
     <Content Include="Web\layui\layui.js" />
     <Content Include="Web\layui\lay\modules\carousel.js" />

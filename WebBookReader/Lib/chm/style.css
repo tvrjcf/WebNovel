@@ -1,0 +1,14 @@
+body{font-size: 12pt; 
+    line-height: 17pt;
+}
+.body{
+    background:#E7F4FE;
+}
+td{font-FAMILY:ËÎÌå;font-size: 9pt; line-height: 160%}
+.article_title{font-FAMILY:Î¢ÈíÑÅºÚ;font-size: 20pt;  letter-spacing: 2px; line-height: 130%; margin: 6; font-weight: bold;}
+.newfont2{font-FAMILY:ËÎÌå;font-size: 9pt; line-height: 12pt}
+.newfont3{font-FAMILY:ËÎÌå;font-size: 9pt; line-height: 12pt}
+.thetd{font-FAMILY:Î¢ÈíÑÅºÚ;font-size: 13pt; color:#000000;line-height: 160%;font-weight:None;font-style: None}
+a:hover {color: #FF0000}
+a:link {text-decoration: none}
+a:visited {text-decoration: none}

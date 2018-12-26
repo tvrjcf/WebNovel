@@ -188,11 +188,12 @@
         </div>
         <div id="downDialog" class="" style="padding: 5px;">
             <table class="layui-hide" id="updateList" lay-filter="update"></table>
-            <div class="layui-progress" lay-filter="downLoadProgress"><!--lay-showpercent="true"-->
+            <div class="layui-progress" lay-filter="downLoadProgress">
+                <!--lay-showpercent="true"-->
                 <div class="layui-progress-bar layui-bg-red lay-percent='0' "></div>
             </div>
         </div>
-        
+
         <script type="text/html" id="toolbar">
             <div class="layui-btn-container">
                 <button class="layui-btn layui-btn-sm layui-hide" lay-event="getCheckData">获取选中行数据</button>
@@ -202,6 +203,14 @@
                 <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">删除选中</button>
 
             </div>
+        </script>
+
+        <script type="text/html" id="TitleTpl">
+            {{#  if(d.Id === '0'){ }}
+            <span style="color: #ff0000;">{{ d.Title }}</span>
+            {{#  } else { }}
+            <span style="color: blue;">{{ d.Title }}</span>
+            {{#  } }}
         </script>
     </div>
 

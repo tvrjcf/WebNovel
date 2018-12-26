@@ -72,50 +72,58 @@ namespace WebBookReader.Web
         [JSFunctin]
         public string DownLoadContent(string data)
         {
-            var downList = JsonHelper.ToList<NovelContent>(data);
-            CompletedCount = 0;
-            TotalCount = downList.Count;
-            if (TotalCount == 0)
-                return "-1";
-            chapterModel = BH.GetChapterModel();
-            var novelId = downList[0].NovelID;
-            novel = BH.GetNovel(novelId);
-            menuList = BH.GetNovelContents(novelId).ToList<NovelContent>();
-
-            #region 生成章节列表            
-            if (MessageBox.Show("是否生成章节目录?", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            try
             {
-                CommonHelper.CreateDirectory(string.Format(@"chm\{0}", novel.NovelID));
-                listModel = BH.GetMenuListModel();
+                var downList = JsonHelper.ToList<NovelContent>(data);
+                CompletedCount = 0;
+                TotalCount = downList.Count;
+                if (TotalCount == 0)
+                    return "-1";
+                chapterModel = BH.GetChapterModel();
+                var novelId = downList[0].NovelID;
+                novel = BH.GetNovel(novelId);
+                menuList = BH.GetNovelContents(novelId).ToList<NovelContent>();
 
-                BH.SaveNovelListToHtml(novel, menuList, listModel);
-                if (MessageBox.Show("章节目录生成完成,是否继续下载章节内容?", "提示", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                #region 生成章节列表            
+                if (MessageBox.Show("是否生成章节目录?", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    CommonHelper.CreateDirectory(string.Format(@"chm\{0}", novel.NovelID));
+                    listModel = BH.GetMenuListModel();
+
+                    BH.SaveNovelListToHtml(novel, menuList, listModel);
+                    if (MessageBox.Show("章节目录生成完成,是否继续下载章节内容?", "提示", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                    {
+                        return "-1";
+                    };
+                }
+                else
                 {
                     return "-1";
-                };
-            }
-            else
-            {
-                return "-1";
-            }
+                }
 
-            #endregion
+                #endregion
 
-            int tepmId = BH.GetNovelContentMaxId();
-            foreach (var item in downList)
-            {
-                item.Id = tepmId++;
-                ThreadPool.QueueUserWorkItem(new WaitCallback(DownLoad), item);
+                int tepmId = BH.GetNovelContentMaxId();
+                foreach (var item in downList)
+                {
+                    item.Id = tepmId++;
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(DownLoad), item);
+                }
+                //MB.InvokeJS("SetProgressValue(50)");
+                //BH.SaveNovelContents(downList);
+                //var novelId = downList[0].NovelID;
+                //var novel = BH.GetNovel(novelId);
+                ////if (novel != null)
+                ////{
+                ////    var dt = BH.GetNovelContents(novelId);
+                ////    new frmDownContent(novel, dt.ToList<NovelContent>()).ShowDialog();
+                ////}
             }
-            //MB.InvokeJS("SetProgressValue(50)");
-            //BH.SaveNovelContents(downList);
-            //var novelId = downList[0].NovelID;
-            //var novel = BH.GetNovel(novelId);
-            ////if (novel != null)
-            ////{
-            ////    var dt = BH.GetNovelContents(novelId);
-            ////    new frmDownContent(novel, dt.ToList<NovelContent>()).ShowDialog();
-            ////}
+            catch (Exception ex)
+            {
+                return ex.GetBaseException().Message;
+            }
+            
             return "0";
         }
         private void DownLoad(object o)
