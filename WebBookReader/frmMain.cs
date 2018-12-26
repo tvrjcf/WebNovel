@@ -17,14 +17,15 @@ namespace WebBookReader
         public frmMain()
         {
             InitializeComponent();
-            blinkBrowser1.GlobalObjectJs = new ApiHelper();
             mb = blinkBrowser1;
+            blinkBrowser1.GlobalObjectJs = new MBApiHelper(blinkBrowser1);
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
             //this.blinkBrowser1.Url = "http://www.baidu.com/";
             NavigationLocalUrl(ConfigurationManager.AppSettings["Web.index"].ToString());//@"Web/test.html";
+            
         }
 
         [JSFunctin]

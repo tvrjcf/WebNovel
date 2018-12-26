@@ -174,6 +174,7 @@ namespace WebBookManage.Common
             int maxid = GetNovelContentMaxId();
             foreach (var menu in menulist)
             {
+                if (menu.Id > 0) continue;
                 menu.Id = maxid++;
             }
             var dt = MDataTable.CreateFrom(menulist);
@@ -675,7 +676,7 @@ namespace WebBookManage.Common
         public NovelContent GetPrior(List<NovelContent> list, int menuId)
         {
             var currIndex = list.FindIndex(p => p.Id == menuId);
-            if (currIndex == 0) return null;
+            if (currIndex <= 0) return null;
             return list[currIndex - 1];
         }
         /// <summary>
@@ -687,6 +688,7 @@ namespace WebBookManage.Common
         public NovelContent GetNext(List<NovelContent> list, int menuId)
         {
             var currIndex = list.FindIndex(p => p.Id == menuId);
+            if (currIndex <= 0) return null;
             if (currIndex == list.Count - 1) return null;
             return list[currIndex + 1];
         }

@@ -55,6 +55,7 @@
             this.Controls.Add(this.blinkBrowser1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "阅读器";
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.ResumeLayout(false);
