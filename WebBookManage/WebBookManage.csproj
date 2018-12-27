@@ -2467,7 +2467,6 @@
     <Content Include="lib\chm\underline.gif" />
     <Content Include="lib\chm\WEB服务器V3.0.exe" />
     <Content Include="lib\CYQ.Data.dll" />
-    <Content Include="lib\CYQ.Data.pdb" />
     <Content Include="lib\CYQ.Data.xml" />
     <Content Include="lib\Microsoft.WindowsAPICodePack.dll" />
     <Content Include="lib\Microsoft.WindowsAPICodePack.Shell.dll" />

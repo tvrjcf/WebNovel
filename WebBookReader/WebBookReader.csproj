@@ -326,7 +326,7 @@
     <Content Include="Web\layui\images\face\71.gif" />
     <Content Include="Web\layui\images\face\8.gif" />
     <Content Include="Web\layui\images\face\9.gif" />
-    <Content Include="Web\book_update.html">
+    <Content Include="Web\book_down.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Web\main.html">

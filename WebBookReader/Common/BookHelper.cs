@@ -688,8 +688,8 @@ namespace WebBookManage.Common
         public NovelContent GetNext(List<NovelContent> list, int menuId)
         {
             var currIndex = list.FindIndex(p => p.Id == menuId);
-            if (currIndex <= 0) return null;
-            if (currIndex == list.Count - 1) return null;
+            if (currIndex < 0) return null;
+            if (currIndex >= list.Count - 1) return null;
             return list[currIndex + 1];
         }
 

@@ -28,6 +28,10 @@ namespace WebBookReader.Web
             MessageBox.Show("ApiTest : " + msg);
         }
 
+        /// <summary>
+        /// 查询书籍类型
+        /// </summary>
+        /// <returns>JsonData</returns>
         [JSFunctin]
         public string GetNovelTypes()
         {
@@ -35,6 +39,10 @@ namespace WebBookReader.Web
             return data;
         }
 
+        /// <summary>
+        /// 查询书籍
+        /// </summary>
+        /// <returns></returns>
         [JSFunctin]
         public string GetNovels()
         {
@@ -42,6 +50,11 @@ namespace WebBookReader.Web
             return data;
         }
 
+        /// <summary>
+        /// 删除书籍
+        /// </summary>
+        /// <param name="novelId">书籍ID</param>
+        /// <returns></returns>
         [JSFunctin]
         public string DelNovel(string novelId)
         {
@@ -58,6 +71,31 @@ namespace WebBookReader.Web
                 result.Success = false;
                 result.Message = ex.GetBaseException().Message;
             }
+            var jsonData = JsonConvert.SerializeObject(result);
+            return jsonData;
+        }
+
+        /// <summary>
+        /// 根据书籍ID查询目录
+        /// </summary>
+        /// <param name="novelId">书籍ID</param>
+        /// <returns></returns>
+        [JSFunctin]
+        public string GetNovelContents(string novelId)
+        {
+            var result = new Result();
+            try
+            {
+                var data = BH.GetNovelContents(novelId).ToJson(false, false).Replace("null", "\"\"");
+                result.Success = true;
+                result.Data = data;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.GetBaseException().Message;
+            }
+            //var jsonData = JsonHelper.ToJson(result);
             var jsonData = JsonConvert.SerializeObject(result);
             return jsonData;
         }
@@ -95,6 +133,9 @@ namespace WebBookReader.Web
             try
             {
                 var downList = JsonHelper.ToList<NovelContent>(data);
+
+                BH.SaveNovelContents(downList);
+
                 CompletedCount = 0;
                 TotalCount = downList.Count;
                 if (TotalCount == 0)
@@ -123,21 +164,14 @@ namespace WebBookReader.Web
 
                 #endregion
 
-                int tepmId = BH.GetNovelContentMaxId();
+                //int tepmId = BH.GetNovelContentMaxId();
                 foreach (var item in downList)
                 {
-                    item.Id = tepmId++;
+                    //item.Id = tepmId++;
                     ThreadPool.QueueUserWorkItem(new WaitCallback(DownLoad), item);
                 }
                 //MB.InvokeJS("SetProgressValue(50)");
-                //BH.SaveNovelContents(downList);
-                //var novelId = downList[0].NovelID;
-                //var novel = BH.GetNovel(novelId);
-                ////if (novel != null)
-                ////{
-                ////    var dt = BH.GetNovelContents(novelId);
-                ////    new frmDownContent(novel, dt.ToList<NovelContent>()).ShowDialog();
-                ////}
+
             }
             catch (Exception ex)
             {
@@ -160,7 +194,7 @@ namespace WebBookReader.Web
                 //{
                 var prior = BH.GetPrior(menuList, menu.Id);
                 var next = BH.GetNext(menuList, menu.Id);
-                var result = BH.SaveNovelContentToHtml(novel, ref menu, chapterModel, next, null, true);
+                var result = BH.SaveNovelContentToHtml(novel, ref menu, chapterModel, prior, next, true);
                 //    Console.WriteLine(result);
                 //    lock (lockObj)
                 //    {

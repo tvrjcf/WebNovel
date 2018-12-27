@@ -6,7 +6,7 @@ var element = layui.element;
 
 var bookTypes = [];
 var books = [];
-var updateList = [];
+var downLoadData = [];
 
 function layerAlert(msg) {
     layer.alert(msg, { offset: '100px' });
@@ -77,7 +77,10 @@ function BindBook(bookType) {
         tpl += "    </a>";
         tpl += "    <div class=\"edit-tool\" > ";
         tpl += "        <a class=\"update\" style=\"text-decoration:none\" title=\"更新\" key='" + item.NovelID + "' bookname='" + item.NovelName + "'>";
-        tpl += "            <i class=\"layui-icon\" style=\"color:green;\">&#xe601;</i>";
+        tpl += "            <i class=\"layui-icon\" style=\"color:green;\">&#xe666;</i>";
+        tpl += "        </a>";
+        tpl += "        <a class=\"download\" style=\"text-decoration:none\" title=\"下载\" key='" + item.NovelID + "' bookname='" + item.NovelName + "'>";
+        tpl += "            <i class=\"layui-icon\" style=\"color:orange;\">&#xe601;</i>";
         tpl += "        </a>";
         tpl += "        <a class=\"edit\" style=\"text-decoration:none\" title=\"编辑\" key='" + item.NovelID + "' bookname='" + item.NovelName + "'>";
         tpl += "           <i class=\"layui-icon\" style=\"color:darkviolet;\">&#xe642;</i>";
@@ -94,25 +97,39 @@ function BindBook(bookType) {
     $(".book").show(300);
 
     $(".update").bind("click", function () {
-        updateList = [];
+        downLoadData = [];
         var key = $(this).attr("key");
         var bookname = $(this).attr("bookname");
         var result = JSON.parse(UpdateNovel(key));
         if (!result.Success) { layerAlert(result.Message); return; }
-        updateList = JSON.parse(result.Data);
-        if (updateList.length == 0)
+        downLoadData = JSON.parse(result.Data);
+        if (downLoadData.length == 0)
             layerMsg("没有要更新的内容");
         //layer.tips('没有要更新的内容', "#book_" + key);
         else
-            layer.confirm("[" + bookname + "] 发现章节更新 [" + updateList.length + "], 是否进行同步?",
+            layer.confirm("[" + bookname + "] 发现章节更新 [" + downLoadData.length + "], 是否进行同步?",
                 { offset: '100px', title: '章节更新', icon: 3 },
-                function (index) { ShowUpdateList(updateList); },
+                function (index) { ShowDownLoadWin(downLoadData, '更新列表', 'book_down.html'); },
                 function (index) { layer.close(index); }
             );
     });
 
+    $(".download").bind("click", function () {
+        downLoadData = [];
+        var key = $(this).attr("key");
+        var bookname = $(this).attr("bookname");
+        var result = JSON.parse(GetNovelContents(key));
+        if (!result.Success) { layerAlert(result.Message); return; }
+        downLoadData = JSON.parse(result.Data);
+        if (downLoadData.length == 0)
+            layerMsg("没有要下载的内容");
+        //layer.tips('没有要更新的内容', "#book_" + key);
+        else
+            ShowDownLoadWin(downLoadData, '目录列表', 'book_down.html');
+    });
+
     $(".edit").bind("click", function () {
-        updateList = [];
+        downLoadData = [];
         var key = $(this).attr("key");
         var bookname = $(this).attr("bookname");
         var data = GetBook(key);
@@ -134,7 +151,7 @@ function BindBook(bookType) {
     });
 
     $(".delete").bind("click", function () {
-        updateList = [];
+        downLoadData = [];
         var key = $(this).attr("key");
         var bookname = $(this).attr("bookname");
 
@@ -171,117 +188,33 @@ function SetProgressValue(value) {
  * 显示更新列表
  * @param {any} data
  */
-function ShowUpdateList(data) {
-    localStorage.setItem("updateList", JSON.stringify(data));
-    SetProgressValue(0);
+function ShowDownLoadWin(data, title, content) {
+    localStorage.setItem("downLoadData", JSON.stringify(data));
+    //SetProgressValue(0);
+    var layerOpen = null;
     layer.open({
         type: 2,
-        title: '更新列表',
+        title: title || "下载",
         offset: '50px',
-        area: ['700px', '470px'],
+        area: ['750px', '500px'],
         //fixed: false, //不固定
         maxmin: true,
-        content: 'book_update.html',
+        content: content || 'book_down.html',
         //content: $('#downDialog'),
         end: function () {
             $('#downDialog').hide();
-        }
-    });
-    //
-    return;
-
-    table.render({
-        id: 'updateList'
-        , elem: '#updateList'
-        , toolbar: '#toolbar'
-        , cols: [[ //标题栏
-            { type: 'checkbox' }
-            //, { field: 'Id', title: 'ID', width: 80, sort: true }
-            , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl' }
-            //, { field: 'Volume', title: '分卷名', minWidth: 150 }
-            , { field: 'ComeFrom', title: '地址', width: 400 }
-            //, { field: 'city', title: '城市', width: 100 }
-            //, { field: 'experience', title: '积分', width: 80, sort: true }
-        ]]
-        , data: data
-        //,skin: 'line' //表格风格
-        , even: true
-        , page: true //是否显示分页
-        , limits: [100, 200, 500, 1000]
-        , limit: 200 //每页默认显示的数量
-        , height: '380'
-    });
-    //头工具栏事件
-    table.on('toolbar(update)', function (obj) {
-        var checkStatus = table.checkStatus(obj.config.id);
-        switch (obj.event) {
-            case 'getCheckData':
-                var data = checkStatus.data;
-                layerAlert(JSON.stringify(data));
-                break;
-            case 'getCheckLength':
-                var data = checkStatus.data;
-                layerMsg('选中了：' + data.length + ' 个');
-                break;
-            case 'isAll':
-                layerMsg(checkStatus.isAll ? '全选' : '未全选');
-                break;
-            case 'downLoad':
-                var data = checkStatus.data;
-
-                if (data.length == 0) {
-                    layerMsg("没有要选中任何数据");
-                    return;
-                }
-                layer.confirm('确认要下载[' + data.length + ' ]行数据么?'
-                    , { offset: '100px', title: '章节下载', icon: 3 }
-                    , function (index) {
-                        //layer.close(index);
-                        layerMsg('开始下载...');
-                        SetProgressValue(0);
-                        var ret = DownLoadContent(JSON.stringify(data));
-                        if (ret == "-1") {
-                            layerMsg('下载已取消!'); return;
-                        } else if (ret == "0") {
-                            var value = 0;
-                            var setInterval = self.setInterval(function () {
-                                value = UpdateProgressValue();
-                                SetProgressValue(value);
-                                if (value >= 100) {
-                                    window.clearInterval(setInterval)
-                                    layerMsg('下载完成!');
-                                }
-                            }, 500)
-                        } else {
-                            layerAlert(ret);
-                        }
-                        //SetProgressValue(30);
-                        //table.reload('updateList', { data: updateList });
-                    });
-                break;
-            case 'delete':
-                var data = checkStatus.data;
-                if (data.length == 0) {
-                    layerMsg("没有要选中任何数据");
-                    return;
-                }
-                layer.confirm('确认要删除[' + data.length + ' ]行数据么?'
-                    , { offset: '100px', title: '章节删除', icon: 3 }
-                    , function (index) {
-                        //$(".layui-form-checked").not('header').parents('tr').remove();
-                        //layerMsg(JSON.stringify(updateList));
-                        $(data).each(function (i, item) {
-                            $(updateList).each(function (j, update) {
-                                if (item.ComeFrom == update.ComeFrom) {
-                                    updateList.splice(j, 1);
-                                }
-                            });
-                        });
-                        layer.close(index);
-                        table.reload('updateList', { data: updateList });
-                    });
-                break;
-        };
+        },
+        success: function (layero, index) {
+            layerOpen = layero;
+        },
+        full: function () {
+            var iframeWin = window[layerOpen.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法
+            iframeWin.Resize()
+        },
+        restore: function () {
+            var iframeWin = window[layerOpen.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法
+            iframeWin.Resize()
+        },
     });
 }
 

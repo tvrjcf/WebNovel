@@ -4,9 +4,7 @@ var form = layui.form;
 var table = layui.table;
 var element = layui.element;
 
-var bookTypes = [];
-var books = [];
-var updateList = JSON.parse(localStorage.getItem("updateList"));    //parent.updateList;
+var downLoadData = JSON.parse(localStorage.getItem("downLoadData"));    //parent.updateList;
 
 function layerAlert(msg) {
     layer.alert(msg, { offset: '100px' });
@@ -24,12 +22,12 @@ function SetProgressValue(value) {
 function Init() {
     SetProgressValue(0);
     table.render({
-        id: 'updateList'
-        , elem: '#updateList'
+        id: 'menuList'
+        , elem: '#menuList'
         , toolbar: '#toolbar'
         , cols: [[ //标题栏
             { type: 'checkbox' }
-            //, { field: 'Id', title: 'ID', width: 80, sort: true }
+            , { field: 'Id', title: 'ID', width: 70, sort: true }
             , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl' }
             //, { field: 'Volume', title: '分卷名', minWidth: 150 }
             , { field: 'ComeFrom', title: '地址', width: 400 }
@@ -41,8 +39,9 @@ function Init() {
         , even: true
         , page: true //是否显示分页
         , limits: [100, 200, 500, 1000]
-        , limit: 200 //每页默认显示的数量
-        , height: '380'
+        , limit: 500 //每页默认显示的数量
+        , height: 'full-40'
+
     });
     //头工具栏事件
     table.on('toolbar(update)', function (obj) {
@@ -60,7 +59,7 @@ function Init() {
                 layerMsg(checkStatus.isAll ? '全选' : '未全选');
                 break;
             case 'reload':                
-                BindData(updateList);
+                BindData(downLoadData);
                 layerMsg('数据已刷新');
                 break;
             case 'downLoad':
@@ -103,19 +102,15 @@ function Init() {
                 layer.confirm('确认要删除[' + data.length + ' ]行数据么?'
                     , { offset: '100px', title: '章节删除', icon: 3 }
                     , function (index) {
-                        //$(".layui-form-checked").not('header').parents('tr').remove();
-                        //layerMsg(JSON.stringify(updateList));
-                        //alert(updateList.length);
                         $(data).each(function (i, item) {
-                            $(updateList).each(function (j, update) {
+                            $(downLoadData).each(function (j, update) {
                                 if (item.ComeFrom == update.ComeFrom) {
-                                    updateList.splice(j, 1);
-                                    //alert(updateList.length);
+                                    downLoadData.splice(j, 1);
                                 }
                             });
                         });
                         layer.close(index);
-                        BindData(updateList);    //table.reload('updateList', { data: updateList });
+                        BindData(downLoadData);    
                     });
                 break;
         };
@@ -123,18 +118,25 @@ function Init() {
 }
 
 /**
- * 显示更新列表
+ * 绑定数据
  * @param {any} data
  */
 function BindData(data) {
 
     //alert(data.length);
-    table.reload('updateList', { data: data });
+    table.reload('menuList', { data: data });
+}
+/**
+ * 重置大小
+ * */
+function Resize() {
+    //alert('resize');
+    table.reload('menuList', { height: 'full-40'});
 }
 
 
 $(document).ready(function () {
     Init();
-    BindData(updateList);
+    BindData(downLoadData);
     
 });

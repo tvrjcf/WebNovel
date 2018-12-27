@@ -58,7 +58,7 @@ function Init() {
                 layerMsg(checkStatus.isAll ? '全选' : '未全选');
                 break;
             case 'reload':                
-                BindData(updateList);
+                BindData(downLoadData);
                 layerMsg('数据已刷新');
                 break;
             case 'downLoad':
@@ -105,15 +105,15 @@ function Init() {
                         //layerMsg(JSON.stringify(updateList));
                         //alert(updateList.length);
                         $(data).each(function (i, item) {
-                            $(updateList).each(function (j, update) {
+                            $(downLoadData).each(function (j, update) {
                                 if (item.ComeFrom == update.ComeFrom) {
-                                    updateList.splice(j, 1);
+                                    downLoadData.splice(j, 1);
                                     //alert(updateList.length);
                                 }
                             });
                         });
                         layer.close(index);
-                        BindData(updateList);    //table.reload('updateList', { data: updateList });
+                        BindData(downLoadData);    //table.reload('updateList', { data: updateList });
                     });
                 break;
         };
@@ -133,6 +133,6 @@ function BindData(data) {
 
 $(document).ready(function () {
     Init();
-    BindData(updateList);
+    BindData(downLoadData);
     
 });

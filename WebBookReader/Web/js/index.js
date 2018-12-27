@@ -6,7 +6,7 @@ var element = layui.element;
 
 var bookTypes = [];
 var books = [];
-var updateList = [];
+var downLoadData = [];
 
 function layerAlert(msg) {
     layer.alert(msg, { offset: '100px' });
@@ -95,19 +95,19 @@ function BindBook(bookType) {
     $("#bookList").html(content);
 
     $(".updatebook").bind("click", function () {
-        updateList = [];
+        downLoadData = [];
         var key = $(this).attr("key");
         var bookname = $(this).attr("bookname");
         var result = JSON.parse(UpdateNovel(key));
         if (!result.Success) { layerAlert(result.Message); return; }
-        updateList = JSON.parse(result.Data);
-        if (updateList.length == 0)
+        downLoadData = JSON.parse(result.Data);
+        if (downLoadData.length == 0)
             layerMsg("没有要更新的内容");
         //layer.tips('没有要更新的内容', "#book_" + key);
         else
-            layer.confirm("[" + bookname + "] 发现章节更新 [" + updateList.length + "], 是否进行同步?",
+            layer.confirm("[" + bookname + "] 发现章节更新 [" + downLoadData.length + "], 是否进行同步?",
                 { offset: '100px', title: '章节更新', icon: 3 },
-                function (index) { ShowUpdateList(updateList); },
+                function ShowDownLoadWinhowDownWin(downLoadData); },
                 function (index) { layer.close(index); }
             );
     });
@@ -123,8 +123,7 @@ function SetProgressValue(value) {
 /**
  * 显示更新列表
  * @param {any} data
- */
-function ShowUpdateList(data) {
+ *ShowDownLoadWin ShowDownWin(data) {
 
     SetProgressValue(0);
     layer.open({
@@ -220,14 +219,14 @@ function ShowUpdateList(data) {
                         //$(".layui-form-checked").not('header').parents('tr').remove();
                         //layerMsg(JSON.stringify(updateList));
                         $(data).each(function (i, item) {
-                            $(updateList).each(function (j, update) {
+                            $(downLoadData).each(function (j, update) {
                                 if (item.ComeFrom == update.ComeFrom) {
-                                    updateList.splice(j, 1);
+                                    downLoadData.splice(j, 1);
                                 }
                             });
                         });
                         layer.close(index);
-                        table.reload('updateList', { data: updateList });
+                        table.reload('updateList', { data: downLoadData });
                     });
                 break;
         };
