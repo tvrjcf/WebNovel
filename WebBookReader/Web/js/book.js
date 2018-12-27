@@ -22,22 +22,27 @@ function GetBookTypes() {
     bookTypes = JSON.parse(GetNovelTypes());
     //alert(bookTypes);
     $("#bookType").html("");
-    $("#bookType").append("<div class=\"nav-item\" key = 'all'><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>全部</a></div>");
+    $("#bookType").append("<li class='layui-nav-item layui-this' key='all'><a title='全部'>全部</a></li>");
     $(bookTypes).each(function (i, item) {
-        $("#bookType").append("<div class=\"nav-item\" key = '" + item.DM + "'><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>" + item.MC + "(" + item.DM + ")</a></div>");
+        $("#bookType").append("<li class='layui-nav-item' key='" + item.DM + "'><a title='" + item.MC + "'>" + item.MC + "</a></li>"); //(" + item.DM + ")
+        //$("#bookType").append("<div class=\"nav-item\" key = '" + item.DM + "'><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>" + item.MC + "(" + item.DM + ")</a></div>");
     });
-    $(".nav-item").bind("click", function () {
+    $(".layui-nav-item").bind("click", function () {
         //alert($(this).attr("key"));
         //BindBook($(this).attr("key"));
         var key = $(this).attr("key");
+        //$(".layui-this").removeClass("layui-this");
+        $(this).addClass("layui-this").siblings(".layui-this").removeClass("layui-this");
+        $(".book").hide();
         $(".book").each(function (i, item) {
             if (key == "all") {
-                $(item).show();
+                $(item).show(300);
             } else {
-                if ($(item).attr("key") != key)
-                    $(item).hide();
+                if ($(item).attr("LB") != key) {
+                    //$(item).hide(); 
+                }
                 else
-                    $(item).show();
+                    $(item).show(300);
             }
         });
     });
@@ -62,39 +67,33 @@ function BindBook(bookType) {
     var content = "";
     $(books).each(function (i, item) {
         //if (bookType != "all" && item.LB != bookType) return true;
+        var tpl = "";
+        tpl += "<li class=\"layui-col-xs2 book\" style=\"width: 150px; display:none;\" LB='" + item.LB + "' key='" + item.NovelID + "'>";
+        tpl += "    <a class=\"x-admin-backlog-body\" style=\"height: 150px;\" href = '..\\..\\chm\\" + item.NovelID + "\\List.htm'>";
+        tpl += "        <img src=\"./images/Default.png\" width=\"80\" height=\"110\" />";
+        tpl += "       <p style=\"text-align:center; margin:5px 0;\">";
+        tpl += "           <cite>" + item.NovelName + "</cite>";
+        tpl += "        </p>";
+        tpl += "    </a>";
+        tpl += "    <div class=\"edit-tool\" > ";
+        tpl += "        <a class=\"update\" style=\"text-decoration:none\" title=\"更新\" key='" + item.NovelID + "' bookname='" + item.NovelName + "'>";
+        tpl += "            <i class=\"layui-icon\" style=\"color:green;\">&#xe601;</i>";
+        tpl += "        </a>";
+        tpl += "        <a class=\"edit\" style=\"text-decoration:none\" title=\"编辑\" key='" + item.NovelID + "' bookname='" + item.NovelName + "'>";
+        tpl += "           <i class=\"layui-icon\" style=\"color:darkviolet;\">&#xe642;</i>";
+        tpl += "        </a>";
+        tpl += "        <a class=\"delete\" style=\"text-decoration:none\" title=\"删除\" key='" + item.NovelID + "' bookname='" + item.NovelName + "'>";
+        tpl += "           <i class=\"layui-icon\" style=\"color:red;\">&#xe640;</i>";
+        tpl += "       </a>";
+        tpl += "   </div> ";
+        tpl += "</li> ";
+        content += tpl;
 
-        var bookTpl = "<div class='yd-book-item yd-book-item-pull-left book' key='" + item.LB + "'>";
-        if ((i + 1) % 2 == 0) bookTpl = "<div class='yd-book-item yd-book-item-pull-left edge-right book' key='" + item.LB + "'>";
-        bookTpl += "<button id='book_" + item.NovelID + "' class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='" + item.NovelID + "' bookname='" + item.NovelName + "'><i class='layui-icon'>&#xe669;</i></button>";
-        bookTpl += "    <a href = '..\\..\\chm\\" + item.NovelID + "\\List.htm' > <img src='./res/Default.png' alt='" + item.NovelName + "' class='pull-left cover-container' width='90' height='120' /> <h2>(" + item.LB + ")" + item.NovelName + "</h2> </a>";
-        //bookTpl += "<a href = '#' target = '_blank' onclick = 'OpenBook(" + item.NovelID +")'> <img src='./res/Default.png' alt='" + item.NovelName + "' class='pull-left cover-container' width='114' height='160' /> <h2>" + item.NovelName + "</h2> </a>";
-        bookTpl += "    <div class='author-container'>";
-        bookTpl += "        <dl class='dl-horizontal-inline'>";
-        bookTpl += "            <dt>作者：</dt>";
-        bookTpl += "            <dd>" + item.Author + "</dd>";
-        bookTpl += "        </dl>";
-        bookTpl += "    </div>";
-        bookTpl += "    <div class='rate w-star w-star1'> ";
-        bookTpl += "        <span>&nbsp;</span > ";
-        bookTpl += "        <span>&nbsp;</span > ";
-        bookTpl += "        <span>&nbsp;</span > ";
-        bookTpl += "        <span>&nbsp;</span > ";
-        bookTpl += "        <span class='no' >&nbsp;</span> ";
-        bookTpl += "    </div> ";
-        bookTpl += "    <div class='price-container f-invi'>";
-        bookTpl += "        < b class='price' > ￥9.90 </b> ";
-        bookTpl += "    </div> ";
-        //bookTpl += "    <div class='summery'> ";
-        //bookTpl += "    <p>简介：" + "" + "</p> "; //item.Brief
-        //bookTpl += "    </div > ";
-        bookTpl += "    <div class='badge badge-complete png' ></div > ";
-        bookTpl += "</div >";
-
-        content += bookTpl;
     });
     $("#bookList").html(content);
+    $(".book").show(300);
 
-    $(".updatebook").bind("click", function () {
+    $(".update").bind("click", function () {
         updateList = [];
         var key = $(this).attr("key");
         var bookname = $(this).attr("bookname");
@@ -111,6 +110,54 @@ function BindBook(bookType) {
                 function (index) { layer.close(index); }
             );
     });
+
+    $(".edit").bind("click", function () {
+        updateList = [];
+        var key = $(this).attr("key");
+        var bookname = $(this).attr("bookname");
+        var data = GetBook(key);
+        localStorage.setItem("editbook", JSON.stringify(data));
+
+        layer.open({
+            type: 2,
+            title: '编辑 [' + bookname + ']',
+            offset: '50px',
+            area: ['700px', '470px'],
+            //fixed: false, //不固定
+            maxmin: true,
+            content: 'book_edit.html',
+            //content: $('#downDialog'),
+            //end: function () {
+            //    $('#downDialog').hide();
+            //}
+        });
+    });
+
+    $(".delete").bind("click", function () {
+        updateList = [];
+        var key = $(this).attr("key");
+        var bookname = $(this).attr("bookname");
+
+        layer.confirm("确认要删除 [" + bookname + "] 吗?",
+            { offset: '100px', title: '书籍删除', icon: 3 },
+            function (index) {
+                var result = JSON.parse(DelNovel(key));
+                if (!result.Success) {
+                    layerAlert(result.Message); return;
+                }
+                $(books).each(function (i, item) {
+                    if (item.NovelID === key) {
+                        books.slice(i, 1);
+                        $(".book[key='" + key + "']").remove();
+                        layerMsg("[" + bookname + "] 已删除");
+                        return false;
+                    }
+                });
+                layer.close(index);
+            },
+            function (index) { layer.close(index); }
+        );
+    });
 }
 
 function DownLoad(data) {
@@ -125,21 +172,23 @@ function SetProgressValue(value) {
  * @param {any} data
  */
 function ShowUpdateList(data) {
-
+    localStorage.setItem("updateList", JSON.stringify(data));
     SetProgressValue(0);
     layer.open({
-        type: 1,
+        type: 2,
         title: '更新列表',
         offset: '50px',
         area: ['700px', '470px'],
         //fixed: false, //不固定
         maxmin: true,
-        content: $('#downDialog'),
+        content: 'book_update.html',
+        //content: $('#downDialog'),
         end: function () {
             $('#downDialog').hide();
         }
     });
     //
+    return;
 
     table.render({
         id: 'updateList'
@@ -148,7 +197,7 @@ function ShowUpdateList(data) {
         , cols: [[ //标题栏
             { type: 'checkbox' }
             //, { field: 'Id', title: 'ID', width: 80, sort: true }
-            , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl' }}
+            , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl' }
             //, { field: 'Volume', title: '分卷名', minWidth: 150 }
             , { field: 'ComeFrom', title: '地址', width: 400 }
             //, { field: 'city', title: '城市', width: 100 }
@@ -193,17 +242,19 @@ function ShowUpdateList(data) {
                         var ret = DownLoadContent(JSON.stringify(data));
                         if (ret == "-1") {
                             layerMsg('下载已取消!'); return;
+                        } else if (ret == "0") {
+                            var value = 0;
+                            var setInterval = self.setInterval(function () {
+                                value = UpdateProgressValue();
+                                SetProgressValue(value);
+                                if (value >= 100) {
+                                    window.clearInterval(setInterval)
+                                    layerMsg('下载完成!');
+                                }
+                            }, 500)
+                        } else {
+                            layerAlert(ret);
                         }
-                        var value = 0;
-                        var setInterval = self.setInterval(function () {
-                            value = UpdateProgressValue();
-                            SetProgressValue(value);
-                            if (value >= 100) {
-                                window.clearInterval(setInterval)
-                                layerMsg('下载完成!');
-                            }
-                        }, 500)
-
                         //SetProgressValue(30);
                         //table.reload('updateList', { data: updateList });
                     });
@@ -234,12 +285,22 @@ function ShowUpdateList(data) {
     });
 }
 
-function sleep(numberMillis) {
-    var now = new Date();
-    var exitTime = now.getTime() + numberMillis;
-    while (true) {
-        now = new Date();
-        if (now.getTime() > exitTime)
-            return;
-    }
+function GetBook(id) {
+    $(books).each(function (i, item) {
+        if (item.NovelID === id) {
+            return item;
+        }
+    });
 }
+
+$(document).ready(function () {
+
+    setTimeout(function () {
+        layer.closeAll('loading');
+    }, 500);
+    GetBookTypes();
+    GetBooks();
+    setTimeout(function () {
+        layer.closeAll('loading');
+    }, 500);
+});
