@@ -16,10 +16,18 @@
             margin-left: 30px;
         }
     </style>
+
+    <script src="./layui/layui.all.js"></script>
+    <script>
+        var loading = layer.load(1, {
+            shade: [0.5, '#fff'] //0.1透明度的白色背景
+        });//此处演示关闭
+        
+    </script>
 </head>
 <body>
     <div class="x-body" style="margin:auto; max-width:820px;">
-        <ul class="layui-nav layui-bg-cyan" lay-filter="" id="bookType">
+        <ul class="layui-nav  layui-bg-cyan" lay-filter="" id="bookType"><!-- layui-nav-tree layui-nav-side -->
             <li class="layui-nav-item layui-this"><a href="">青春文学</a></li>
             <li class="layui-nav-item"><a href="#">穿越架空</a></li>
             <li class="layui-nav-item"><a href="#">大数据</a></li>
@@ -160,7 +168,7 @@
 
         <div id="downDialog" class="" style="padding: 5px;">
             <table class="layui-hide" id="updateList" lay-filter="update"></table>
-            <div class="layui-progress" lay-filter="downLoadProgress">
+            <div class="layui-progress" lay-filter="downLoadProgress" style="display: none;">
                 <!--lay-showpercent="true"-->
                 <div class="layui-progress-bar layui-bg-red lay-percent='0' "></div>
             </div>
@@ -186,7 +194,6 @@
         </script>
     </div>
 
-    <script src="./layui/layui.all.js"></script>
     <script src="./js/main.js"></script>
     <script>
         var $ = layui.$ //重点处;

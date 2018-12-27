@@ -38,8 +38,7 @@ function GetBookTypes() {
             if (key == "all") {
                 $(item).show(300);
             } else {
-                if ($(item).attr("key") != key)
-                {
+                if ($(item).attr("key") != key) {
                     //$(item).hide(); 
                 }
                 else
@@ -90,36 +89,6 @@ function BindBook(bookType) {
         tpl += "</li> ";
         content += tpl;
 
-
-
-        //var bookTpl = "<div class='yd-book-item yd-book-item-pull-left book' key='" + item.LB + "'>";
-        //if ((i + 1) % 2 == 0) bookTpl = "<div class='yd-book-item yd-book-item-pull-left edge-right book' key='" + item.LB + "'>";
-        //bookTpl += "<button id='book_" + item.NovelID + "' class='layui-btn layui-btn-sm layui-btn-primary updatebook' key='" + item.NovelID + "' bookname='" + item.NovelName + "'><i class='layui-icon'>&#xe669;</i></button>";
-        //bookTpl += "    <a href = '..\\..\\chm\\" + item.NovelID + "\\List.htm' > <img src='./res/Default.png' alt='" + item.NovelName + "' class='pull-left cover-container' width='90' height='120' /> <h2>(" + item.LB + ")" + item.NovelName + "</h2> </a>";
-        ////bookTpl += "<a href = '#' target = '_blank' onclick = 'OpenBook(" + item.NovelID +")'> <img src='./res/Default.png' alt='" + item.NovelName + "' class='pull-left cover-container' width='114' height='160' /> <h2>" + item.NovelName + "</h2> </a>";
-        //bookTpl += "    <div class='author-container'>";
-        //bookTpl += "        <dl class='dl-horizontal-inline'>";
-        //bookTpl += "            <dt>作者：</dt>";
-        //bookTpl += "            <dd>" + item.Author + "</dd>";
-        //bookTpl += "        </dl>";
-        //bookTpl += "    </div>";
-        //bookTpl += "    <div class='rate w-star w-star1'> ";
-        //bookTpl += "        <span>&nbsp;</span > ";
-        //bookTpl += "        <span>&nbsp;</span > ";
-        //bookTpl += "        <span>&nbsp;</span > ";
-        //bookTpl += "        <span>&nbsp;</span > ";
-        //bookTpl += "        <span class='no' >&nbsp;</span> ";
-        //bookTpl += "    </div> ";
-        //bookTpl += "    <div class='price-container f-invi'>";
-        //bookTpl += "        < b class='price' > ￥9.90 </b> ";
-        //bookTpl += "    </div> ";
-        ////bookTpl += "    <div class='summery'> ";
-        ////bookTpl += "    <p>简介：" + "" + "</p> "; //item.Brief
-        ////bookTpl += "    </div > ";
-        //bookTpl += "    <div class='badge badge-complete png' ></div > ";
-        //bookTpl += "</div >";
-
-        //content += bookTpl;
     });
     $("#bookList").html(content);
     $(".book").show(300);
@@ -155,21 +124,23 @@ function SetProgressValue(value) {
  * @param {any} data
  */
 function ShowUpdateList(data) {
-
+    localStorage.setItem("updateList", JSON.stringify(data));
     SetProgressValue(0);
     layer.open({
-        type: 1,
+        type: 2,
         title: '更新列表',
         offset: '50px',
         area: ['700px', '470px'],
         //fixed: false, //不固定
         maxmin: true,
-        content: $('#downDialog'),
+        content: 'book_update.html',
+        //content: $('#downDialog'),
         end: function () {
             $('#downDialog').hide();
         }
     });
     //
+    return;
 
     table.render({
         id: 'updateList'
@@ -178,7 +149,7 @@ function ShowUpdateList(data) {
         , cols: [[ //标题栏
             { type: 'checkbox' }
             //, { field: 'Id', title: 'ID', width: 80, sort: true }
-            , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl'}
+            , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl' }
             //, { field: 'Volume', title: '分卷名', minWidth: 150 }
             , { field: 'ComeFrom', title: '地址', width: 400 }
             //, { field: 'city', title: '城市', width: 100 }
@@ -268,7 +239,13 @@ function ShowUpdateList(data) {
 
 
 $(document).ready(function () {
+
+    setTimeout(function () {
+        layer.closeAll('loading');
+    }, 500);
     GetBookTypes();
     GetBooks();
-
+    setTimeout(function () {
+        layer.closeAll('loading');
+    }, 500);
 });

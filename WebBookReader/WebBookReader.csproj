@@ -219,6 +219,9 @@
     <Content Include="Web\Index1\res\style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Web\js\book.update.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web\js\main.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -317,6 +320,9 @@
     <Content Include="Web\layui\images\face\71.gif" />
     <Content Include="Web\layui\images\face\8.gif" />
     <Content Include="Web\layui\images\face\9.gif" />
+    <Content Include="Web\book_update.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web\main.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
