@@ -129,10 +129,10 @@ function BindBook(bookType) {
     });
 
     $(".edit").bind("click", function () {
-        downLoadData = [];
         var key = $(this).attr("key");
         var bookname = $(this).attr("bookname");
-        var data = GetBook(key);
+        var data = GetNovel(key);
+        //alert(JSON.stringify(data));
         localStorage.setItem("editbook", JSON.stringify(data));
 
         layer.open({
@@ -219,11 +219,13 @@ function ShowDownLoadWin(data, title, content) {
 }
 
 function GetBook(id) {
+    //alert(JSON.stringify(books));
     $(books).each(function (i, item) {
-        if (item.NovelID === id) {
+        if (item.NovelID == id) {
             return item;
         }
     });
+    return null;
 }
 
 $(document).ready(function () {

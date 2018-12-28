@@ -5,6 +5,9 @@ var table = layui.table;
 var element = layui.element;
 
 var book = JSON.parse(localStorage.getItem("editbook"));    //parent.updateList;
+var bookstr = "{\"NovelID\":\"000003\",\"NovelName\":\"吞噬星空\",\"bIsEnd\":false,\"ListUrl\":\"http://www.cilook.net/book/0/31/index.html\",\"ContentStart\":\"<div id=\\\"content\\\">\",\"ContentEnd\":\"</div>\",\"LB\":\"07\",\"Displayorder\":2,\"NeedDelUrl\":\"http://www.cilook.net/book/0/31/1440155.html(第二十九篇 第三十六章 超脱轮回(大结局)上)||http://www.cilook.net/book/0/31/1440163.html(第二十九篇 第三十六章 超脱轮回（大结局）下)||http://www.cilook.net/(思路客小说网)||http://www.cilook.net/b/1_1.html(玄幻魔法)||http://www.cilook.net/book/0/31/(吞噬星空最新章节列表)||http://www.cilook.net/modules/article/addbookcase.php?bid=31(加入书架)||http://www.cilook.net/modules/article/uservote.php?id=31(推荐本书)||http://www.cilook.net/b/31.html(吞噬星空)\"}";
+//book = JSON.parse(bookstr);
+alert(localStorage.getItem("editbook").replace("/\\/", "") +"\n\n"+bookstr);
 
 function layerAlert(msg) {
     layer.alert(msg, { offset: '100px' });
@@ -13,126 +16,62 @@ function layerMsg(msg) {
     layer.msg(msg, { offset: '100px' });
 }
 
-function SetProgressValue(value) {
-    element.progress('downLoadProgress', value + "%");
-    if (value != 0) $(".layui-progress").show();
-    else $(".layui-progress").hide();
-}
-
 function Init() {
-    SetProgressValue(0);
-    table.render({
-        id: 'updateList'
-        , elem: '#updateList'
-        , toolbar: '#toolbar'
-        , cols: [[ //标题栏
-            { type: 'checkbox' }
-            //, { field: 'Id', title: 'ID', width: 80, sort: true }
-            , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl' }
-            //, { field: 'Volume', title: '分卷名', minWidth: 150 }
-            , { field: 'ComeFrom', title: '地址', width: 400 }
-            //, { field: 'city', title: '城市', width: 100 }
-            //, { field: 'experience', title: '积分', width: 80, sort: true }
-        ]]
-        //, data: []
-        //,skin: 'line' //表格风格
-        , even: true
-        , page: true //是否显示分页
-        , limits: [100, 200, 500, 1000]
-        , limit: 200 //每页默认显示的数量
-        , height: '380'
-    });
-    //头工具栏事件
-    table.on('toolbar(update)', function (obj) {
-        var checkStatus = table.checkStatus(obj.config.id);
-        switch (obj.event) {
-            case 'getCheckData':
-                var data = checkStatus.data;
-                layerAlert(JSON.stringify(data));
-                break;
-            case 'getCheckLength':
-                var data = checkStatus.data;
-                layerMsg('选中了：' + data.length + ' 个');
-                break;
-            case 'isAll':
-                layerMsg(checkStatus.isAll ? '全选' : '未全选');
-                break;
-            case 'reload':                
-                BindData(downLoadData);
-                layerMsg('数据已刷新');
-                break;
-            case 'downLoad':
-                var data = checkStatus.data;
-
-                if (data.length == 0) {
-                    layerMsg("没有要选中任何数据");
-                    return;
-                }
-                layer.confirm('确认要下载[' + data.length + ' ]行数据么?'
-                    , { offset: '100px', title: '章节下载', icon: 3 }
-                    , function (index) {
-                        //layer.close(index);
-                        layerMsg('开始下载...');
-                        SetProgressValue(0);
-                        var ret = parent.DownLoadContent(JSON.stringify(data));
-                        if (ret == "-1") {
-                            layerMsg('下载已取消!'); return;
-                        } else if (ret == "0") {
-                            var value = 0;
-                            var setInterval = self.setInterval(function () {
-                                value = parent.UpdateProgressValue();
-                                SetProgressValue(value);
-                                if (value >= 100) {
-                                    window.clearInterval(setInterval)
-                                    layerMsg('下载完成!');
-                                }
-                            }, 500)
-                        } else {
-                            layerAlert(ret);
-                        }
-                    });
-                break;
-            case 'delete':
-                var data = checkStatus.data;
-                if (data.length == 0) {
-                    layerMsg("没有要选中任何数据");
-                    return;
-                }
-                layer.confirm('确认要删除[' + data.length + ' ]行数据么?'
-                    , { offset: '100px', title: '章节删除', icon: 3 }
-                    , function (index) {
-                        //$(".layui-form-checked").not('header').parents('tr').remove();
-                        //layerMsg(JSON.stringify(updateList));
-                        //alert(updateList.length);
-                        $(data).each(function (i, item) {
-                            $(downLoadData).each(function (j, update) {
-                                if (item.ComeFrom == update.ComeFrom) {
-                                    downLoadData.splice(j, 1);
-                                    //alert(updateList.length);
-                                }
-                            });
-                        });
-                        layer.close(index);
-                        BindData(downLoadData);    //table.reload('updateList', { data: updateList });
-                    });
-                break;
-        };
-    });
+    BindForm(book);
+    if (book != null) {
+        
+    }
 }
 
 /**
  * 显示更新列表
  * @param {any} data
  */
-function BindData(data) {
-
-    //alert(data.length);
-    table.reload('updateList', { data: data });
+function BindForm(data) {
+    alert(JSON.stringify(data));
+    //表单初始赋值
+    form.val('form', {
+        "NovelID": data.NovelID
+        , "NovelName": data.NovelName
+        , "ListUrl": data.ListUrl
+        , "LB": data.LB
+        , "Author": data.Author
+        , "Brief": data.Brief
+        , "BookImg": data.BookImg
+        , "ListStart": data.ListStart
+        , "ListEnd": data.ListEnd
+        , "VolumeStart": data.VolumeStart
+        , "VolumeEnd": data.VolumeEnd
+        , "ContentStart": data.ContentStart
+        , "ContentEnd": data.ContentEnd
+        , "NeedDelStr": data.NeedDelStr
+    })
+    form.render(); //更新全部
+    $("#test").val("124");
+    //$("#NovelID").val(data.NovelID);
+    //$("#NovelName").val(data.NovelName);
+    //$("#ListUrl").val(data.ListUrl);
+    //$("#LB").val(data.LB);
+    //$("#Author").val(data.Author);
+    //$("#Brief").val(data.Brief);
+    //$("#BookImg").val(data.BookImg);
+    //$("#ListStart").val(data.ListStart);
+    //$("#ListEnd").val(data.ListEnd);
+    //$("#VolumeStart").val(data.VolumeStart);
+    //$("#VolumeEnd").val(data.VolumeEnd);
+    //$("#ContentStart").val(data.ContentStart);
+    //$("#ContentEnd").val(data.ContentEnd);
+    //$("#NeedDelStr").val(data.NeedDelStr);
 }
 
+//监听提交
+form.on('submit(form)', function (data) {
+    layer.alert(JSON.stringify(data.field), {
+        title: '最终的提交信息'
+    })
+    return false;
+});
 
 $(document).ready(function () {
-    Init();
-    BindData(downLoadData);
-    
+    Init();    
 });

@@ -44,6 +44,17 @@ namespace WebBookReader.Web
         /// </summary>
         /// <returns></returns>
         [JSFunctin]
+        public string GetNovel(string novelId)
+        {
+            var data = JsonHelper.ToJson(BH.GetNovel(novelId)).Replace("null", "\"\"");
+            return data;
+        }
+
+        /// <summary>
+        /// 查询书籍
+        /// </summary>
+        /// <returns></returns>
+        [JSFunctin]
         public string GetNovels()
         {
             var data = BH.GetNovels().ToJson(false, false).Replace("null", "\"\"");
@@ -177,7 +188,7 @@ namespace WebBookReader.Web
             {
                 return ex.GetBaseException().Message;
             }
-            
+
             return "0";
         }
         private void DownLoad(object o)
@@ -214,7 +225,7 @@ namespace WebBookReader.Web
             finally
             {
                 Interlocked.Increment(ref CompletedCount);
-                
+
                 //CompleteEvent(menu);
             }
         }
@@ -229,7 +240,7 @@ namespace WebBookReader.Web
             //return string.Format("{0}/{1}", CompletedCount, TotalCount);
             return value.ToString();
         }
-        
+
     }
 
     public class Result
