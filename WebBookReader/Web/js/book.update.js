@@ -26,22 +26,38 @@ function Init() {
         , elem: '#menuList'
         , toolbar: '#toolbar'
         , cols: [[ //标题栏
-            { type: 'checkbox' }
+            { type: 'numbers' }
+            , { type: 'checkbox' }
             , { field: 'Id', title: 'ID', width: 70, sort: true }
             , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl' }
             //, { field: 'Volume', title: '分卷名', minWidth: 150 }
-            , { field: 'ComeFrom', title: '地址', width: 400 }
+            , { field: 'ComeFrom', title: '地址', width: 350 }
             //, { field: 'city', title: '城市', width: 100 }
             //, { field: 'experience', title: '积分', width: 80, sort: true }
         ]]
         //, data: []
-        //,skin: 'line' //表格风格
-        , even: true
-        , page: true //是否显示分页
+        , size: 'sm'    //表格尺寸
+        //, skin: 'line'  //表格风格(line、row、nob)
+        , even: true    //隔行背景
+        , page: true    //是否显示分页
         , limits: [100, 200, 500, 1000]
         , limit: 500 //每页默认显示的数量
         , height: 'full-40'
 
+    });
+    //监听行单击事件
+    table.on('row(update)', function (obj) {
+        //console.log(obj.tr) //得到当前行元素对象
+        //console.log(obj.data) //得到当前行数据
+        //obj.del(); //删除当前行
+        //obj.update(fields) //修改当前行数据
+
+        //layer.alert(JSON.stringify(obj.data), {
+        //    title: '当前行数据：'
+        //});
+
+        //标注选中样式
+        obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
     });
     //头工具栏事件
     table.on('toolbar(update)', function (obj) {
