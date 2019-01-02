@@ -178,6 +178,9 @@
     <Content Include="Lib\usermodel\素白\chaptermodel.htm" />
     <Content Include="Lib\usermodel\素白\listmodel.htm" />
     <Content Include="Lib\usermodel\素白\temp.htm" />
+    <Content Include="sitesign.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Web\book_edit.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

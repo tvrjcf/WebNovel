@@ -497,8 +497,9 @@ namespace WebBookManage.Common
                 else
                     root.ReplaceChild(newNode, oldNode);
                 xml.Save(@"SiteSign.xml");
+                GC.Collect();
             }
-
+            xml = null;
             return newNode;
         }
 

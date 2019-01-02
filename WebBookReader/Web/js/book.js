@@ -45,13 +45,13 @@ function GetBookTypes() {
                 ShowEditdWin({ NovelID: 0 }, '添加书籍'); return false;
             }
             if (selectType == "all") {
-                $(item).show(300);
+                $(item).show();
             } else {
                 if ($(item).attr("LB") != selectType) {
                     //$(item).hide(); 
                 }
                 else
-                    $(item).show(300);
+                    $(item).show();
             }
         });
     });
@@ -81,7 +81,7 @@ function BindBook(bookType) {
 
     });
     $("#bookList").html(content);
-    $(".book").show(300);
+    $(".book").show();
 }
 
 /**
@@ -376,7 +376,7 @@ function PushBook(data) {
 function GetBookHtmlTpl(item) {
 
     var tpl = "";
-    tpl += "<li class=\"layui-col-xs2 book\" style=\"width: 150px; display:none;\" LB='" + item.LB + "' key='" + item.NovelID + "'>";
+    tpl += "<li class=\"layui-col-xs2 layui-anim layui-anim-scale book\" style=\"width: 150px; display:none;\" LB='" + item.LB + "' key='" + item.NovelID + "'>";
     tpl += "    <a class=\"x-admin-backlog-body\" style=\"height: 150px;\" href = '..\\..\\chm\\" + item.NovelID + "\\List.htm'>";
     tpl += "        <img src=\"./images/Default.png\" width=\"80\" height=\"110\" />";
     tpl += "       <p style=\"text-align:center; margin:5px 0;\">";

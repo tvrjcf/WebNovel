@@ -62,7 +62,7 @@ namespace WebBookReader.Web
         }
 
         /// <summary>
-        /// 删除书籍
+        /// 保存书籍
         /// </summary>
         /// <param name="novelId">书籍ID</param>
         /// <returns></returns>
@@ -141,6 +141,11 @@ namespace WebBookReader.Web
             return jsonData;
         }
 
+        /// <summary>
+        /// 更新书籍
+        /// </summary>
+        /// <param name="novelId"></param>
+        /// <returns></returns>
         [JSFunctin]
         public string UpdateNovel(string novelId)
         {
@@ -260,6 +265,10 @@ namespace WebBookReader.Web
             }
         }
 
+        /// <summary>
+        /// 查询下载进度
+        /// </summary>
+        /// <returns></returns>
         [JSFunctin]
         public string UpdateProgressValue()
         {
@@ -271,6 +280,92 @@ namespace WebBookReader.Web
             return value.ToString();
         }
 
+        /// <summary>
+        /// http/https切换
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="novelId"></param>
+        [JSFunctin]
+        public int ChangeHttpMode(string url, string novelId) {
+
+            //var listUrl = txtListUrl.Text;
+            if (string.IsNullOrEmpty(url))
+            {
+                //MessageBox.Show("请填写目录页网址! ", "提示");
+                return -1;
+            }
+            if (BH.ChangeHttpMode(novelId))
+            {
+                //LoadData(NovelId);
+                //MessageBox.Show("已切换完成! ", "提示");
+                return 1;
+            }
+            return -1;
+        }
+
+        /// <summary>
+        ///取出正文标志
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        [JSFunctin]
+        public string GetSiteSign(string url)
+        {
+            var data = JsonHelper.ToJson(BH.GetSiteSign(url)).Replace("null", "\"\"");
+            return data;
+        }
+
+        /// <summary>
+        /// 保存正文标志
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [JSFunctin]
+        public string SaveSiteSign(string data)
+        {
+            var result = new Result();
+            try
+            {
+                var novel = JsonHelper.ToEntity<Novel>(data);
+
+                string rootUrl = CommonHelper.GetWebRootUrl(novel.ListUrl);
+                var sign = BH.GetSiteSign(rootUrl);
+                if (sign == null)
+                {
+                    sign = new WebBookManage.Model.SiteSign()
+                    {
+                        name = rootUrl,
+                        url = rootUrl,
+                        ListStart = novel.ListStart,
+                        ListEnd = novel.ListEnd,
+                        ContentStart = novel.ContentStart,
+                        ContentEnd = novel.ContentEnd,
+                        NeedDelStr = novel.NeedDelStr,
+                        VolumeStart = novel.VolumeStart,
+                        VolumeEnd = novel.VolumeEnd,
+                        BriefUrlStart = "",
+                        BriefUrlEnd = "",
+                        AuthorStart = "",
+                        AuthorEnd = "",
+                        BriefStart = "",
+                        BriefEnd = "",
+                        BookImgUrlStart = "",
+                        BookImgUrlEnd = ""
+                    };
+                }
+                BH.ToXmlNode(sign);
+                //var save = BH.SaveNovel(novel);
+                result.Success = true;
+                result.Data = JsonHelper.ToJson(sign, false);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.GetBaseException().Message;
+            }
+            var jsonData = JsonConvert.SerializeObject(result);
+            return jsonData;
+        }
     }
 
     public class Result

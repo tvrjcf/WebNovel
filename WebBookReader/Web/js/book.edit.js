@@ -27,6 +27,54 @@ function Init() {
     if (book != null) {
         BindForm(book);
     }
+
+    $(".btn-http-change").on('click', function () {
+        var url = $("#ListUrl").val();
+        var novelId = $("#NovelID").val();
+        //layerMsg(parent.ChangeHttpMode(url, novelId) == -1);
+        if (parent.ChangeHttpMode(url, novelId) == 1) {
+            layerMsg("切换成功!");
+            if (url.indexOf("https") >= 0) {
+                url = url.replace("https", "http");
+            } else {
+                url = url.replace("http", "https");
+
+            }
+
+            $("#ListUrl").val(url);
+        }
+    });
+
+    $(".btn-sign-get").on('click', function () {
+        var url = $("#ListUrl").val();
+        var sign = JSON.parse(parent.GetSiteSign(url));
+        if (sign && sign.url) {
+            $("#ContentStart").val(sign.ContentStart);
+            $("#ContentEnd").val(sign.ContentEnd);
+            $("#ListStart").val(sign.ListStart);
+            $("#ListEnd").val(sign.ListEnd);
+            $("#VolumeStart").val(sign.VolumeStart);
+            $("#VolumeEnd").val(sign.VolumeEnd);
+            $("#NeedDelStr").val(sign.NeedDelStr);
+            layerMsg("取出成功");
+        } else {
+            layerMsg("还未收录过该站点标志信息");
+        }
+    });
+
+    //$(".btn-sign-save").on('click', function () {
+
+    //    var result = JSON.parse(parent.SaveSiteSign(JSON.stringify(data.field)));
+    //    if (!result.Success) {
+    //        layerAlert(result.Message); return false;
+    //    }        
+    //    layerMsg("正文标志已保存!");
+    //    return false;
+    //});
+
+    $(".btn-sign-manage").on('click', function () {
+        
+    });
 }
 
 /**
@@ -66,7 +114,15 @@ form.on('submit(formSubmit)', function (data) {
     }
     var save = JSON.parse(result.Data);
     parent.PushBook(new Array(save));
-    layerMsg("保存成功!\n" + "'[" + save.NovelID + "][" + save.NovelName + "]'");
+    layerMsg("保存成功!\n" + "[" + save.NovelID + "][" + save.NovelName + "]");
+    return false;
+});
+form.on('submit(formSaveToSign)', function (data) {
+    var result = JSON.parse(parent.SaveSiteSign(JSON.stringify(data.field)));
+    if (!result.Success) {
+        layerAlert(result.Message); return false;
+    }
+    layerMsg("正文标志已保存!");
     return false;
 });
 
