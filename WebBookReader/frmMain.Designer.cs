@@ -41,7 +41,7 @@
             this.blinkBrowser1.JsGetValue = null;
             this.blinkBrowser1.Location = new System.Drawing.Point(0, 0);
             this.blinkBrowser1.Name = "blinkBrowser1";
-            this.blinkBrowser1.Size = new System.Drawing.Size(884, 561);
+            this.blinkBrowser1.Size = new System.Drawing.Size(804, 551);
             this.blinkBrowser1.TabIndex = 0;
             this.blinkBrowser1.Text = "blinkBrowser1";
             this.blinkBrowser1.Url = "";
@@ -51,7 +51,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(884, 561);
+            this.ClientSize = new System.Drawing.Size(804, 551);
             this.Controls.Add(this.blinkBrowser1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMain";

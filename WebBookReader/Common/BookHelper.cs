@@ -71,6 +71,24 @@ namespace WebBookManage.Common
             return maxid;
         }
 
+
+        public Novel SaveNovel(Novel novel)
+        {
+            bool ret = false;
+            if (novel.NovelID == "0")
+            {
+                novel.NovelID = GetNovelMaxId().ToString().PadLeft(6, '0');
+                ret = novel.Insert(true, CYQ.Data.InsertOp.ID);
+            }
+            else
+            {
+                ret = novel.Update(string.Format("NovelID='{0}'", novel.NovelID));
+            }
+            if (!ret)
+                throw new ValidationException(novel.DebugInfo);
+            return novel;
+        }
+
         /// <summary>
         /// 删除书籍
         /// </summary>

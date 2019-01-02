@@ -22,7 +22,7 @@
         .layui-input, .layui-select, .layui-textarea {
             height: 30px;
             line-height: 1;
-            line-height: 30px;
+            line-height: 20px;
             border-width: 1px;
             border-style: solid;
             background-color: #fff;
@@ -53,7 +53,6 @@
 </head>
 <body>
     <div class="x-body" style="margin:auto; max-width:820px; padding:2px;">
-	                        <input type="text" id="test" name="test" required placeholder="test" >
 
         <form class="layui-form" action="" lay-filter="form">
             <div class="layui-form-item">
@@ -64,7 +63,7 @@
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <input type="text" id="NovelID" name="NovelID" placeholder="ID" autocomplete="off" class="layui-input">
+                    <input type="text" id="NovelID" name="NovelID" placeholder="ID" autocomplete="off" class="layui-input" disabled>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -79,11 +78,11 @@
                     <div class="layui-input-inline">
                         <select id="LB" name="LB">
                             <option value="">选择分类</option>
-                            <option value="0">北京</option>
-                            <option value="1">上海</option>
-                            <option value="2">广州</option>
-                            <option value="3">深圳</option>
-                            <option value="4">杭州</option>
+                            <option value="0">青春文学</option>
+                            <option value="1">穿越架空</option>
+                            <option value="2">大数据</option>
+                            <option value="3">悬疑推理</option>
+                            <option value="4">恐怖惊悚</option>
                         </select>
                     </div>
                 </div>
@@ -112,7 +111,7 @@
             <div class="layui-form-item layui-form-text">
                 <label class="layui-form-label">内容简介</label>
                 <div class="layui-input-block">
-                    <textarea id="Brief" name="Brief" placeholder="内容简介" class="layui-textarea"></textarea>
+                    <textarea id="Brief" name="Brief" required placeholder="内容简介" class="layui-textarea"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
@@ -170,7 +169,7 @@
 
             <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                    <button class="layui-btn" lay-submit lay-filter="formSubmit">保存</button>
                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
             </div>
@@ -181,11 +180,11 @@
     <script src="./layui/layui.all.js"></script>
     <script src="./js/book.edit.js"></script>
     <script>
-        var $ = layui.$ //重点处;
-        var layer = layui.layer;
-        var form = layui.form;
-        var table = layui.table;
-        var element = layui.element;
+        //var $ = layui.$ //重点处;
+        //var layer = layui.layer;
+        //var form = layui.form;
+        //var table = layui.table;
+        //var element = layui.element;
     </script>
 </body>
 

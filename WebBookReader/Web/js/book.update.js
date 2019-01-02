@@ -7,10 +7,10 @@ var element = layui.element;
 var downLoadData = JSON.parse(localStorage.getItem("downLoadData"));    //parent.updateList;
 
 function layerAlert(msg) {
-    layer.alert(msg, { offset: '100px' });
+    layer.alert(msg, { /*offset: '100px'*/ });
 }
 function layerMsg(msg) {
-    layer.msg(msg, { offset: '100px' });
+    layer.msg(msg, { /*offset: '100px'*/ });
 }
 
 function SetProgressValue(value) {
@@ -86,7 +86,10 @@ function Init() {
                     return;
                 }
                 layer.confirm('确认要下载[' + data.length + ' ]行数据么?'
-                    , { offset: '100px', title: '章节下载', icon: 3 }
+                    , {
+                        //offset: '100px',
+                        title: '章节下载', icon: 3
+                    }
                     , function (index) {
                         //layer.close(index);
                         layerMsg('开始下载...');
@@ -116,7 +119,10 @@ function Init() {
                     return;
                 }
                 layer.confirm('确认要删除[' + data.length + ' ]行数据么?'
-                    , { offset: '100px', title: '章节删除', icon: 3 }
+                    , {
+                        //offset: '100px',
+                        title: '章节删除', icon: 3
+                    }
                     , function (index) {
                         $(data).each(function (i, item) {
                             $(downLoadData).each(function (j, update) {

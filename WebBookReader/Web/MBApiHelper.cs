@@ -67,6 +67,36 @@ namespace WebBookReader.Web
         /// <param name="novelId">书籍ID</param>
         /// <returns></returns>
         [JSFunctin]
+        public string SaveNovel(string data)
+        {
+            var result = new Result();
+            try
+            {
+                var novel = JsonHelper.ToEntity<Novel>(data);
+                //if (novel.NovelID == "0")
+                //    result.Success = novel.Insert(true, CYQ.Data.InsertOp.ID);
+                //else
+                //    result.Success = novel.Update(string.Format("NovelID='{0}'", novel.NovelID));
+                //if (!result.Success) throw new ValidationException(novel.DebugInfo);
+                var save = BH.SaveNovel(novel);
+                result.Success = true;
+                result.Data = JsonHelper.ToJson(save, false);
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.GetBaseException().Message;
+            }
+            var jsonData = JsonConvert.SerializeObject(result);
+            return jsonData;
+        }
+
+        /// <summary>
+        /// 删除书籍
+        /// </summary>
+        /// <param name="novelId">书籍ID</param>
+        /// <returns></returns>
+        [JSFunctin]
         public string DelNovel(string novelId)
         {
             var result = new Result();
