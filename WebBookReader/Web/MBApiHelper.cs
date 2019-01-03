@@ -4,6 +4,7 @@ using MiniBlinkPinvoke;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -127,7 +128,7 @@ namespace WebBookReader.Web
             var result = new Result();
             try
             {
-                var data = BH.GetNovelContents(novelId).ToJson(false, false).Replace("null", "\"\"");
+                var data = JsonHelper.ToJson(BH.GetNovelContents(novelId).ToList<NovelContent>(), false).Replace("null", "\"\"");
                 result.Success = true;
                 result.Data = data;
             }
@@ -327,7 +328,8 @@ namespace WebBookReader.Web
             try
             {
                 var novel = JsonHelper.ToEntity<Novel>(data);
-
+                if (novel.ListUrl.Length == 0)
+                    throw new ValidationException("网站地址不能为空");
                 string rootUrl = CommonHelper.GetWebRootUrl(novel.ListUrl);
                 var sign = BH.GetSiteSign(rootUrl);
                 if (sign == null)
@@ -353,7 +355,7 @@ namespace WebBookReader.Web
                         BookImgUrlEnd = ""
                     };
                 }
-                BH.ToXmlNode(sign);
+                BH.SignToJson(sign);
                 //var save = BH.SaveNovel(novel);
                 result.Success = true;
                 result.Data = JsonHelper.ToJson(sign, false);
@@ -365,6 +367,13 @@ namespace WebBookReader.Web
             }
             var jsonData = JsonConvert.SerializeObject(result);
             return jsonData;
+        }
+
+        [JSFunctin]
+        public int IsExists(string filePath) {
+            if (File.Exists(filePath))
+                return 1;
+            return -1;
         }
     }
 

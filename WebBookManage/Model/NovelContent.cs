@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CYQ.Data.Orm;
+using System;
 
 namespace WebBookManage.Model
 {
@@ -9,6 +10,7 @@ namespace WebBookManage.Model
             base.SetInit(this, "book_NovelContent");
         }
         public int Id { get; set; }
+        [Key(true, true)]
         public string Title { get; set; }
         public string NovelID { get; set; }
         public string ComeFrom { get; set; }

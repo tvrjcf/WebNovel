@@ -1,4 +1,6 @@
-﻿namespace WebBookManage.Model
+﻿using System.Collections.Generic;
+
+namespace WebBookManage.Model
 {
     public class SiteSign //: CYQ.Data.Orm.OrmBase
     {
@@ -23,9 +25,14 @@
 
     public class Message
     {
-        public SiteSign SiteSign;
+        public List<SiteSign> SiteSign;
     }
-    public class SiteSignXml {
+    public class SiteSignData
+    {
+        public SiteSignData()
+        {
+            MESSAGE = new Message() { SiteSign = new List<SiteSign>() };
+        }
         public Message MESSAGE;
     }
 }

@@ -1,6 +1,9 @@
 ﻿using CYQ.Data;
 using CYQ.Data.Table;
+using CYQ.Data.Tool;
 using CYQ.Data.Xml;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +22,22 @@ namespace WebBookManage.Common
         public static string FILE_PATH_CHAPTER_MODEL = @"chm\{0}\{1}.htm";  //
         private string T_Novel = "book_Novel";
         private string T_NovelContent = "book_NovelContent";
+
+        public BookHelper()
+        {
+            JsonConvert.DefaultSettings = () =>
+            {
+                var setting = new JsonSerializerSettings();
+                setting.TypeNameHandling = TypeNameHandling.Auto;
+                setting.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple;
+                setting.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                setting.NullValueHandling = NullValueHandling.Ignore;
+                setting.Formatting = Newtonsoft.Json.Formatting.Indented;
+                setting.Converters.Add(new JavaScriptDateTimeConverter());
+                //setting.Converters.Add(new DomainJsonConverter());
+                return setting;
+            };
+        }
 
         /// <summary>
         /// 查询书籍
@@ -123,7 +142,7 @@ namespace WebBookManage.Common
         public MDataTable GetNovelContents(string novelId)
         {
             var model = new NovelContent();
-            var dt = model.Select(string.Format("NovelID='{0}' order by id", novelId));
+            var dt = model.Select(string.Format("NovelID='{0}' order by Id", novelId));
             return dt;
         }
 
@@ -363,7 +382,7 @@ namespace WebBookManage.Common
         }
 
         /// <summary>
-        /// 查询网站正文设定标志列表
+        /// 查询网站正文设定标志列表(xml文件)
         /// </summary>
         /// <returns></returns>
         public List<SiteSign> GetSiteSignList()
@@ -504,6 +523,44 @@ namespace WebBookManage.Common
         }
 
         /// <summary>
+        /// 查询网站正文设定标志数据(json文件)
+        /// </summary>
+        /// <returns></returns>
+        public SiteSignData GetSiteSigns()
+        {
+            var saveFile = @"SiteSign.json";
+            var list = new SiteSignData();
+            if (!File.Exists(saveFile)) return list;
+            //var xml = new XmlDocument();
+            //xml.Load(@"SiteSign.xml");
+            //var json = Newtonsoft.Json.JsonConvert.SerializeXmlNode(xml.DocumentElement);
+            var json = File.ReadAllText(saveFile);
+            var data = Newtonsoft.Json.JsonConvert.DeserializeObject<SiteSignData>(json);
+            return data;
+        }
+
+        /// <summary>
+        /// 保存正文标志(json文件)
+        /// </summary>
+        /// <param name="sign"></param>
+        public void SignToJson(SiteSign sign)
+        {
+            var data = GetSiteSigns();
+            var index = data.MESSAGE.SiteSign.FindIndex(p => p.url.Contains(sign.url));
+            if (index != -1)
+            {
+                data.MESSAGE.SiteSign.RemoveAt(index);
+                //data.MESSAGE.SiteSign.Insert(index, sign);
+            }
+            else
+                index = 0;
+            data.MESSAGE.SiteSign.Insert(index, sign);
+            //var setting = new Newtonsoft.Json.JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
+            var json = JsonConvert.SerializeObject(data);
+            CommonHelper.SaveToFile(@"SiteSign.json", json);
+        }
+
+        /// <summary>
         /// 根据网址取出标志
         /// </summary>
         /// <param name="url"></param>
@@ -513,7 +570,7 @@ namespace WebBookManage.Common
             var rootUrl = CommonHelper.GetWebRootUrl(url);
             if (rootUrl.Length == 0)
                 return null;
-            var list = GetSiteSignList();
+            var list = GetSiteSigns().MESSAGE.SiteSign;// GetSiteSignList();
             return list.Find(p => p.url.Contains(rootUrl));
         }
 

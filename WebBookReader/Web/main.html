@@ -10,23 +10,27 @@
     <link href="./layui/css/xadmin.css" rel="stylesheet" />
     <style>
         html, body {
-        overflow :hidden;
+            overflow: hidden;
         }
+
         .edit-tool {
             display: none;
             position: absolute;
             top: 30px;
             margin-left: 30px;
         }
+
         .edit-tool-show {
             display: block;
         }
+
         .clearfloat {
             clear: both;
             height: 0;
             font-size: 1px;
             line-height: 0px;
         }
+
         .full {
             /*height: auto !important;*/
             height: 200px;
@@ -34,19 +38,22 @@
             border: 1px solid #e6e6e6;
             overflow: auto !important;
         }
+
         .layui-carousel > [carousel-item] {
             position: relative;
             width: 100%;
             height: 100%;
             overflow: auto;
         }
+
         .layui-col-space20 {
             margin: 0px;
         }
+
         .x-admin-backlog .x-admin-backlog-body {
             /*display: block;
             padding: 15px 25px;
-            background-color: #f8f8f8; 
+            background-color: #f8f8f8;
             color: #999;
             border-radius: 2px;
             transition: all .3s;
@@ -55,23 +62,28 @@
         }
     </style>
 
-    <script src="./layui/layui.all.js"></script>
     <script>
-        var loading = layer.load(1, {
-            shade: [0.5, '#fff'] //0.1透明度的白色背景
-        });//此处演示关闭
-        
+
+
     </script>
 </head>
 <body>
     <div class="x-body" style="margin:-5px auto;  padding:0px;">
-        <!----><ul class="layui-nav  layui-bg-cyan" lay-filter="" id="bookType">
-
-            <li class="layui-nav-item layui-this"><a href="">青春文学</a></li>
-            <li class="layui-nav-item"><a href="#">穿越架空</a></li>
-            <li class="layui-nav-item"><a href="#">大数据</a></li>
-            <li class="layui-nav-item"><a href="#">悬疑推理</a></li>
-            <li class="layui-nav-item"><a href="#">恐怖惊悚</a></li>
+        <ul class="layui-nav layui-bg-cyan" lay-filter="">
+            <!--<li class="layui-nav-item">
+                <a href="">控制台<span class="layui-badge">9</span></a>
+            </li>
+            <li class="layui-nav-item">
+                <a href="">个人中心<span class="layui-badge-dot"></span></a>
+            </li>-->
+            <li class="layui-nav-item layui-this">
+                <a><img src="./images/Default.png" class="layui-nav-img">管理</a>
+                <dl class="layui-nav-child">
+                    <dd><a href="javascript:ShowEditdWin({ NovelID: 0 }, '添加书籍');">添加书籍</a></dd>
+                    <!--<dd><a href="javascript:;">安全管理</a></dd>
+                    <dd><a href="javascript:;">退了</a></dd>-->
+                </dl>
+            </li>
         </ul>
 
 
@@ -84,8 +96,20 @@
         <!--<div class="layui-card-body"></div>-->
 
 
-        <div class="full layui-carousel x-admin-carousel x-admin-backlog" lay-anim="" lay-indicator="inside" lay-arrow="none" style="width: 100%; display:;">
-            <div carousel-item="">
+        <div class="full layui-carousel x-admin-carousel x-admin-backlog" lay-anim="" lay-indicator="inside" lay-arrow="none" style="width: 100%;">
+
+            <div class="layui-bg-cyan" style="float:left; width:200px; height:100%;">
+                <ul class="layui-nav layui-bg-cyan layui-nav-tree" lay-filter="bookType" id="bookType">
+                    <!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
+                    <li class="layui-nav-item layui-this"><a href="#">全部</a></li>
+                    <li class="layui-nav-item"><a href="#">青春文学</a></li>
+                    <li class="layui-nav-item"><a href="#">穿越架空</a></li>
+                    <li class="layui-nav-item"><a href="#">大数据</a></li>
+                    <li class="layui-nav-item"><a href="#">悬疑推理</a></li>
+                    <li class="layui-nav-item"><a href="#">恐怖惊悚</a></li>
+                </ul>
+            </div>
+            <div class="" carousel-item="" style="width:auto;">
                 <ul class="layui-row layui-col-space20 layui-this" id="bookList">
                     <li class="layui-col-xs2" style="width: 150px;">
                         <a href="javascript:;" class="x-admin-backlog-body" style="height: 150px;">
@@ -94,11 +118,8 @@
                                 <cite>天才选手的新生！</cite>
                             </p>
                         </a>
-                        <div class="edit-tool">
-                            <a style="text-decoration:none" onclick="javascript: layer.msg('更新', {offset:'100px'})" title="更新">
-                                <i class="layui-icon" style="color:green;">&#xe669;</i>
-                            </a>
-                            <a style="text-decoration:none" onclick="javascript: layer.msg('下载', {offset:'100px'})" title="下载">
+                        <div class="edit-tool layui-anim layui-anim-scale">
+                            <a style="text-decoration:none" onclick="javascript: layer.msg('同步', {offset:'100px'})" title="下载">
                                 <i class="layui-icon" style="color:orange;">&#xe601;</i>
                             </a>
                             <a style="text-decoration:none" onclick="javascript: layer.msg('编辑', {offset:'100px'})" title="编辑">
@@ -206,13 +227,34 @@
                     </li>
                 </ul>
 
-
             </div>
         </div>
 
     </div>
-
+    <div style="display:none;">
+        <div id="edit-tool layui-anim layui-anim-scale">
+            <a style="text-decoration:none" onclick="javascript: layer.msg('同步', {offset:'100px'})" title="下载">
+                <i class="layui-icon" style="color:orange;">&#xe601;</i>
+            </a>
+            <a style="text-decoration:none" onclick="javascript: layer.msg('编辑', {offset:'100px'})" title="编辑">
+                <i class="layui-icon" style="color:darkviolet;">&#xe642;</i>
+            </a>
+            <a style="text-decoration:none" onclick="javascript: layer.msg('删除', {offset:'100px'})" title="删除">
+                <i class="layui-icon" style="color:red;">&#xe640;</i>
+            </a>
+        </div>
+    </div>
+    <script src="./layui/layui.all.js"></script>
     <script>
+        var loading = layer.load(0, {
+            shade: [0.95, '#fff'] //0.1透明度的白色背景
+        });//此处演示关闭
+        ////注意：导航 依赖 element 模块，否则无法进行功能性操作
+        //layui.use('element', function () {
+        //    var element = layui.element;
+
+        //    //…
+        //});
         var $ = layui.$ //重点处;
         var layer = layui.layer;
         var form = layui.form;
@@ -223,7 +265,12 @@
             $(".layui-col-xs2").on("mouseover mouseout", function () {
                 $(this).find(".edit-tool").toggle();
             });
+            //$(".layui-col-xs2").on("mouseover",function () {
+            //        var content = $("#edit-tool").html();
+            //    layer.tips(content, this, {tips:[2,"#fff"]});
+            //    }).on("mouseout", function () {
 
+            //    });
             //初始化高度
             $(".full").height($(window).height() - $(".layui-nav").height());
             //当文档窗口发生改变时 触发
@@ -232,7 +279,7 @@
             });
             //setTimeout(function () {
             //    layer.closeAll('loading');
-            //}, 500);
+            //}, 1000);
         });
     </script>
     <script src="./js/book.js"></script>

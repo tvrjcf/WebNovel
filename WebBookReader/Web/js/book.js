@@ -32,7 +32,7 @@ function GetBookTypes() {
         $("#bookType").append("<li class='layui-nav-item' key='" + item.DM + "'><a title='" + item.MC + "'>" + item.MC + "</a></li>"); //(" + item.DM + ")
         //$("#bookType").append("<div class=\"nav-item\" key = '" + item.DM + "'><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>" + item.MC + "(" + item.DM + ")</a></div>");
     });
-    $("#bookType").append("<li class='layui-nav-item addbook' key='addbook'><a title='添加书籍'>添加书籍</a></li>");
+    //$("#bookType").append("<li class='layui-nav-item addbook' key='addbook'><a title='添加书籍'>添加书籍</a></li>");
     $(".layui-nav-item").bind("click", function () {
         //alert($(this).attr("key"));
         //BindBook($(this).attr("key"));
@@ -88,7 +88,7 @@ function BindBook(bookType) {
  * 绑定书籍相关事件
  * */
 function BindBookEvent() {
-    
+
     $(".layui-col-xs2").each(function (i, item) {
         var e = $._data(this, "events");//是this 而不是 $(this)
         //layerMsg(JSON.stringify($(this).data("events"))); 
@@ -97,10 +97,18 @@ function BindBookEvent() {
             $(this).on("mouseover mouseout", function () {
                 $(this).find(".edit-tool").toggle();
             });
+            //var content = $("#edit-tool").html();
+            //$(this).on("hover",
+            //    function () {
+            //        layer.tips(content, this, { tips: [4, "#fff"] });
+            //    }, function () {
+
+            //    }
+            //);
         }
         //return false;
     });
-    
+
     $(".update").each(function (i, item) {
         var e = $._data(this, 'events');
         if (e && e["click"]) {
@@ -121,8 +129,9 @@ function BindBookEvent() {
                     layer.confirm("[" + bookname + "] 发现章节更新 [" + downLoadData.length + "], 是否进行同步?",
                         {
                             //offset: '100px', 
-                            title: '章节更新', 
-                            icon: 3 },
+                            title: '章节更新',
+                            icon: 3
+                        },
                         function (index) { ShowDownLoadWin(downLoadData, '更新列表', 'book_down.html'); },
                         function (index) { layer.close(index); }
                     );
@@ -159,11 +168,11 @@ function BindBookEvent() {
 
                         //return false 开启该代码可禁止点击该按钮关闭
                     }
-                });               
+                });
             });
         }
     });
-    
+
     $(".edit").each(function (i, item) {
         var e = $._data(this, 'events');
         if (e && e["click"]) {
@@ -195,6 +204,52 @@ function BindBookEvent() {
             });
         }
     });
+
+    $(".link-book").each(function (i, item) {
+        var e = $._data(this, 'events');
+        if (e && e["click"]) {
+            //layerMsg("已绑定 click");
+        } else {
+            //layerMsg("未绑定 click");
+            $(this).on("click", function () {
+                var key = $(this).attr("src");
+                var bookname = $(this).attr("bookname");
+                if (fileExists(key) == -1)
+                    layerMsg("目录[" + key + "]不存在");
+                else {
+                    //window.location.href = key;
+                    var index = layer.open({
+                        title: bookname || '',
+                        type: 2,
+                        content: key,
+                        area: ['700px', '500px'],
+                        maxmin: true
+                    });
+                    layer.full(index);
+                }
+            });
+        }
+    });
+}
+
+/**
+ * 判断文件是否存在
+ * @param {string} url
+ */
+function fileExists(url) {
+    var isExists;
+    $.ajax({
+        url: url,
+        async: false,
+        type: 'HEAD',
+        error: function () {
+            isExists = -1;
+        },
+        success: function () {
+            isExists = 1;
+        }
+    });
+    return isExists;
 }
 
 /**
@@ -214,8 +269,9 @@ function UpdateBook(key, bookname) {
         layer.confirm("[" + bookname + "] 发现章节更新 [" + downLoadData.length + "], 是否进行同步?",
             {
                 //offset: '100px', 
-                title: '章节更新', 
-                icon: 3 },
+                title: '章节更新',
+                icon: 3
+            },
             function (index) { ShowDownLoadWin(downLoadData, '更新列表', 'book_down.html'); },
             function (index) { layer.close(index); }
         );
@@ -246,8 +302,9 @@ function DeleteBook(key, bookname) {
     layer.confirm("确认要删除 [" + bookname + "] 吗?",
         {
             //offset: '100px', 
-            title: '书籍删除', 
-            icon: 3 },
+            title: '书籍删除',
+            icon: 3
+        },
         function (index) {
             var result = JSON.parse(DelNovel(key));
             if (!result.Success) {
@@ -357,16 +414,20 @@ function FindBook(id) {
  * 添加书籍
  * @param {any} data    书籍列表
  */
-function PushBook(data) {
+function ReflushBook(data) {
     //alert(books.length);
     $(data).each(function (i, item) {
-        books.push(item);
-        var tpl = GetBookHtmlTpl(item)
-        $("#bookList").append(tpl);
-        //layerMsg(JSON.stringify(item));
+        if (FindBook(item.NovelID)) {
+
+        } else {
+            books.push(item);
+            var tpl = GetBookHtmlTpl(item)
+            $("#bookList").append(tpl);
+            //layerMsg(JSON.stringify(item));
+            BindBookEvent(false);
+        }
     });
 
-    BindBookEvent(false);
 }
 
 /**
@@ -377,13 +438,13 @@ function GetBookHtmlTpl(item) {
 
     var tpl = "";
     tpl += "<li class=\"layui-col-xs2 layui-anim layui-anim-scale book\" style=\"width: 150px; display:none;\" LB='" + item.LB + "' key='" + item.NovelID + "'>";
-    tpl += "    <a class=\"x-admin-backlog-body\" style=\"height: 150px;\" href = '..\\..\\chm\\" + item.NovelID + "\\List.htm'>";
+    tpl += "    <a class=\"x-admin-backlog-body link-book\" style=\"height: 150px;\" src='..\\..\\chm\\" + item.NovelID + "\\List.htm' bookname='" + item.NovelName + "'>";  //href = '..\\..\\chm\\" + item.NovelID + "\\List.htm'
     tpl += "        <img src=\"./images/Default.png\" width=\"80\" height=\"110\" />";
     tpl += "       <p style=\"text-align:center; margin:5px 0;\">";
     tpl += "           <cite>" + item.NovelName + "</cite>";
     tpl += "        </p>";
     tpl += "    </a>";
-    tpl += "    <div class=\"edit-tool\" > ";
+    tpl += "    <div class=\"edit-tool layui-anim layui-anim-scale\" > ";
     //tpl += "        <a class=\"update\" style=\"text-decoration:none\" title=\"更新\" key='" + item.NovelID + "' bookname='" + item.NovelName + "'>";
     //tpl += "            <i class=\"layui-icon\" style=\"color:green;\">&#xe666;</i>";
     //tpl += "        </a>";
@@ -402,14 +463,25 @@ function GetBookHtmlTpl(item) {
 
 }
 
+
 $(document).ready(function () {
 
-    setTimeout(function () {
-        layer.closeAll('loading');
-    }, 500);
-    GetBookTypes();
-    GetBooks();
-    setTimeout(function () {
-        layer.closeAll('loading');
-    }, 500);
+    try {
+        //tryCode - 尝试执行代码块
+        GetBookTypes();
+        GetBooks();
+    }
+    catch (err) {
+        //catchCode - 捕获错误的代码块
+        layerMsg("erro: " + err.message);
+    }
+    finally {
+        //finallyCode - 无论 try / catch 结果如何都会执行的代码块
+        //初始化高度
+        $(".full").height($(window).height() - $(".layui-nav").height());
+        setTimeout(function () {
+            layer.closeAll('loading');
+        }, 200);
+    }
+
 });

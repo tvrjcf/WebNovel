@@ -113,7 +113,7 @@ form.on('submit(formSubmit)', function (data) {
         layerAlert(result.Message); return false;
     }
     var save = JSON.parse(result.Data);
-    parent.PushBook(new Array(save));
+    parent.ReflushBook(new Array(save));
     layerMsg("保存成功!\n" + "[" + save.NovelID + "][" + save.NovelName + "]");
     return false;
 });
