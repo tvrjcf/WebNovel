@@ -69,7 +69,7 @@
 </head>
 <body>
     <div class="x-body" style="margin:-5px auto;  padding:0px;">
-        <ul class="layui-nav layui-bg-cyan" lay-filter="">
+        <ul class="layui-nav layui-bg-cyan" lay-filter="menu" id="menu">
             <!--<li class="layui-nav-item">
                 <a href="">控制台<span class="layui-badge">9</span></a>
             </li>
@@ -79,9 +79,9 @@
             <li class="layui-nav-item layui-this">
                 <a><img src="./images/Default.png" class="layui-nav-img">管理</a>
                 <dl class="layui-nav-child">
-                    <dd><a href="javascript:ShowEditdWin({ NovelID: 0 }, '添加书籍');">添加书籍</a></dd>
-                    <!--<dd><a href="javascript:;">安全管理</a></dd>
-                    <dd><a href="javascript:;">退了</a></dd>-->
+                    <dd><a key="addbook">添加书籍</a></dd>
+                    <dd><a key="sitesign">网站标志库</a></dd>
+                    <!--<dd><a href="javascript:;">退了</a></dd>-->
                 </dl>
             </li>
         </ul>

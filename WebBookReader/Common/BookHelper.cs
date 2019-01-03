@@ -216,7 +216,7 @@ namespace WebBookManage.Common
             }
             var dt = MDataTable.CreateFrom(menulist);
             dt.TableName = menulist[0].TableName;
-            return dt.AcceptChanges(AcceptOp.Insert);
+            return dt.AcceptChanges(AcceptOp.Auto);
         }
         /// <summary>
         /// 从HTML中获取目录列表
@@ -710,12 +710,13 @@ namespace WebBookManage.Common
         /// <param name="nextMenu">下一目录实体</param>
         /// <param name="skipExist">跳过已下载章节，默认true</param>
         /// <returns></returns>
-        public string SaveNovelContentToHtml(Novel novel, ref NovelContent menu, string modelContent, NovelContent priorMenu, NovelContent nextMenu, bool skipExist = true)
+        public string SaveNovelContentToHtml(Novel novel, ref NovelContent menu, string modelContent, NovelContent priorMenu, NovelContent nextMenu, ref string downLoadMsg, bool skipExist = true)
         {
             string saveFileName = string.Format(FILE_PATH_CHAPTER_MODEL, menu.NovelID, menu.Id);
             //跳过已下载的章节
             if (skipExist && File.Exists(saveFileName))
             {
+                downLoadMsg = "已跳过";
                 return string.Format("已跳过 《{0}》", menu.Title);
             }
             string html = CommonHelper.GetHtml(menu.ComeFrom);
@@ -723,6 +724,7 @@ namespace WebBookManage.Common
 
             if (html.Contains("操作超时") && content.Length == 0)
             {
+                downLoadMsg = "操作超时";
                 content = "操作超时";
                 Console.WriteLine(string.Format("操作超时 - > {0}-{1}", menu.Id, menu.Title));
             }

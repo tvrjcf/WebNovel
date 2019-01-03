@@ -19,13 +19,30 @@ function layerMsg(msg) {
         //offset: '100px'
     });
 }
+
+function BindMenuEvent() {
+    $("#menu a").bind("click", function () {
+        var key = $(this).attr("key");
+        layerMsg(key);
+        //if (key == undefined) return;
+        switch (key) {
+            case undefined:
+            case "":
+                break;
+            case "addbook":
+                ShowEditdWin({ NovelID: 0 }, '添加书籍');
+                break;
+            default:
+        }
+
+    });
+}
+
 /**
  * 查询书籍类型 
  */
 function GetBookTypes() {
-    //alert(GetNovelTypes())
     bookTypes = JSON.parse(GetNovelTypes());
-    //alert(bookTypes);
     $("#bookType").html("");
     $("#bookType").append("<li class='layui-nav-item layui-this' key='all'><a title='全部'>全部</a></li>");
     $(bookTypes).each(function (i, item) {
@@ -33,27 +50,32 @@ function GetBookTypes() {
         //$("#bookType").append("<div class=\"nav-item\" key = '" + item.DM + "'><a href=\"#\"><span class=\"icon nav-toggle-trigger\" ></span>" + item.MC + "(" + item.DM + ")</a></div>");
     });
     //$("#bookType").append("<li class='layui-nav-item addbook' key='addbook'><a title='添加书籍'>添加书籍</a></li>");
-    $(".layui-nav-item").bind("click", function () {
-        //alert($(this).attr("key"));
-        //BindBook($(this).attr("key"));
-        selectType = $(this).attr("key");
-        //$(".layui-this").removeClass("layui-this");
-        $(this).addClass("layui-this").siblings(".layui-this").removeClass("layui-this");
-        $(".book").hide();
-        $(".book").each(function (i, item) {
-            if (selectType == "addbook") {
-                ShowEditdWin({ NovelID: 0 }, '添加书籍'); return false;
-            }
-            if (selectType == "all") {
-                $(item).show();
-            } else {
-                if ($(item).attr("LB") != selectType) {
-                    //$(item).hide(); 
-                }
-                else
-                    $(item).show();
-            }
-        });
+    $("#bookType li").bind("click", function () {
+        var key = $(this).attr("key");
+        //layerMsg(key);
+        //if (key == undefined) return;
+        switch (key) {
+            case undefined:
+            case "":
+                break;
+            default:
+                selectType = key;
+                $(this).addClass("layui-this").siblings(".layui-this").removeClass("layui-this");
+                $(".book").hide();
+                $(".book").each(function (i, item) {
+                    if (key == "all") {
+                        $(item).show();
+                    } else {
+                        if ($(item).attr("LB") != key) {
+                            //$(item).hide(); 
+                        }
+                        else
+                            $(item).show();
+                    }
+                });
+        }
+
+
     });
 
 }
@@ -444,7 +466,7 @@ function GetBookHtmlTpl(item) {
     tpl += "           <cite>" + item.NovelName + "</cite>";
     tpl += "        </p>";
     tpl += "    </a>";
-    tpl += "    <div class=\"edit-tool layui-anim layui-anim-scale\" > ";
+    tpl += "    <div class=\"edit-tool \" > ";  //layui-anim layui-anim-scale
     //tpl += "        <a class=\"update\" style=\"text-decoration:none\" title=\"更新\" key='" + item.NovelID + "' bookname='" + item.NovelName + "'>";
     //tpl += "            <i class=\"layui-icon\" style=\"color:green;\">&#xe666;</i>";
     //tpl += "        </a>";
@@ -468,6 +490,7 @@ $(document).ready(function () {
 
     try {
         //tryCode - 尝试执行代码块
+        BindMenuEvent();
         GetBookTypes();
         GetBooks();
     }

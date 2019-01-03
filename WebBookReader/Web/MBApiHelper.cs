@@ -118,6 +118,31 @@ namespace WebBookReader.Web
         }
 
         /// <summary>
+        /// 删除书籍目录
+        /// </summary>
+        /// <param name="novelId">书籍ID</param>
+        /// <returns></returns>
+        [JSFunctin]
+        public string DelNovelContents(string ids)
+        {
+            var result = new Result();
+            try
+            {
+                var idList = JsonConvert.DeserializeObject<List<int>>(ids);
+                BH.DelNovelContents(idList);
+                
+                result.Success = true;
+                result.Data = ids;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.GetBaseException().Message;
+            }
+            var jsonData = JsonConvert.SerializeObject(result);
+            return jsonData;
+        }
+        /// <summary>
         /// 根据书籍ID查询目录
         /// </summary>
         /// <param name="novelId">书籍ID</param>
@@ -174,6 +199,7 @@ namespace WebBookReader.Web
         private string listModel = string.Empty;
         private Novel novel;
         private List<NovelContent> menuList;    //章节列表
+        private List<Result> erroList;    //下载异常列表
         [JSFunctin]
         public string DownLoadContent(string data)
         {
@@ -191,6 +217,7 @@ namespace WebBookReader.Web
                 var novelId = downList[0].NovelID;
                 novel = BH.GetNovel(novelId);
                 menuList = BH.GetNovelContents(novelId).ToList<NovelContent>();
+                erroList = new List<Result>();
 
                 #region 生成章节列表            
                 if (MessageBox.Show("是否生成章节目录?", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
@@ -206,7 +233,7 @@ namespace WebBookReader.Web
                 }
                 else
                 {
-                    return "-1";
+                    //return "-1";
                 }
 
                 #endregion
@@ -239,9 +266,10 @@ namespace WebBookReader.Web
                 //}
                 //else
                 //{
+                var dlmsg = string.Empty;
                 var prior = BH.GetPrior(menuList, menu.Id);
                 var next = BH.GetNext(menuList, menu.Id);
-                var result = BH.SaveNovelContentToHtml(novel, ref menu, chapterModel, prior, next, true);
+                var result = BH.SaveNovelContentToHtml(novel, ref menu, chapterModel, prior, next,ref dlmsg, true);
                 //    Console.WriteLine(result);
                 //    lock (lockObj)
                 //    {
@@ -252,10 +280,13 @@ namespace WebBookReader.Web
 
                 //Thread.Sleep(500);
                 //}
+                if (!string.IsNullOrEmpty(dlmsg))
+                    throw new ValidationException(dlmsg);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(string.Format("下载异常-> <<{0}>> -> {1}", menu.Title, ex.Message));
+                erroList.Add(new Result() { Data = JsonHelper.ToJson(menu),Key = menu.Id, Success = false, Message = ex.GetBaseException().Message });
+                Console.WriteLine(string.Format("下载异常-> <<{0}>> -> {1}", menu.Title, ex.GetBaseException().Message));
                 //this.Invoke(new Action<int, string>(UpdateResult), menu.Id, string.Format("异常 {0}", ex.Message));
             }
             finally
@@ -279,6 +310,16 @@ namespace WebBookReader.Web
             Console.WriteLine(string.Format("{0}/{1} -> {2}%", CompletedCount, TotalCount, value));
             //return string.Format("{0}/{1}", CompletedCount, TotalCount);
             return value.ToString();
+        }
+        /// <summary>
+        /// 查询异常列表
+        /// </summary>
+        /// <returns></returns>
+        [JSFunctin]
+        public string GetErroList()
+        {
+            var data = erroList;
+            return JsonConvert.SerializeObject(data);
         }
 
         /// <summary>
@@ -382,5 +423,6 @@ namespace WebBookReader.Web
         public bool Success = false;
         public string Message = string.Empty;
         public object Data = false;
+        public object Key;
     }
 }

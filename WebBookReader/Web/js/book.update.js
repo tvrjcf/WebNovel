@@ -32,7 +32,7 @@ function Init() {
             , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl' }
             //, { field: 'Volume', title: '分卷名', minWidth: 150 }
             , { field: 'ComeFrom', title: '地址', width: 350 }
-            //, { field: 'city', title: '城市', width: 100 }
+            , { field: 'Info', title: '状态', width: 100, sort: true}
             //, { field: 'experience', title: '积分', width: 80, sort: true }
         ]]
         //, data: []
@@ -74,7 +74,7 @@ function Init() {
             case 'isAll':
                 layerMsg(checkStatus.isAll ? '全选' : '未全选');
                 break;
-            case 'reload':                
+            case 'reload':
                 BindData(downLoadData);
                 layerMsg('数据已刷新');
                 break;
@@ -93,6 +93,11 @@ function Init() {
                     , function (index) {
                         //layer.close(index);
                         layerMsg('开始下载...');
+                        $(downLoadData).each(function (j, down) {
+                            if (item.Key == down.Id) {
+                                down.Info = "";
+                            }
+                        });
                         SetProgressValue(0);
                         var ret = parent.DownLoadContent(JSON.stringify(data));
                         if (ret == "-1") {
@@ -103,8 +108,19 @@ function Init() {
                                 value = parent.UpdateProgressValue();
                                 SetProgressValue(value);
                                 if (value >= 100) {
-                                    window.clearInterval(setInterval)
-                                    layerMsg('下载完成!');
+                                    window.clearInterval(setInterval);
+                                    layerAlert('下载完成!');
+                                    var erro = JSON.parse(parent.GetErroList());
+                                    $(erro).each(function (i, item) {
+
+                                        $(downLoadData).each(function (j, down) {
+                                            if (item.Key == down.Id) {
+                                                down.Info = item.Message;
+                                            }
+                                        });
+                                        //layerMsg(item.Key + "->" + item.Message); return false;
+                                    });
+                                    BindData(downLoadData);
                                 }
                             }, 500)
                         } else {
@@ -124,15 +140,20 @@ function Init() {
                         title: '章节删除', icon: 3
                     }
                     , function (index) {
+                        var ids = [];
                         $(data).each(function (i, item) {
-                            $(downLoadData).each(function (j, update) {
-                                if (item.ComeFrom == update.ComeFrom) {
+                            $(downLoadData).each(function (j, down) {
+                                if (item.ComeFrom == down.ComeFrom) {
                                     downLoadData.splice(j, 1);
+                                    if (item.Id != 0)
+                                        ids.push(item.Id);
                                 }
                             });
                         });
+                        //parent.DelNovelContents(ids.join(','));
+                        parent.DelNovelContents(JSON.stringify(ids));
                         layer.close(index);
-                        BindData(downLoadData);    
+                        BindData(downLoadData);
                     });
                 break;
         };
@@ -153,12 +174,12 @@ function BindData(data) {
  * */
 function Resize() {
     //alert('resize');
-    table.reload('menuList', { height: 'full-40'});
+    table.reload('menuList', { height: 'full-40' });
 }
 
 
 $(document).ready(function () {
     Init();
     BindData(downLoadData);
-    
+
 });
