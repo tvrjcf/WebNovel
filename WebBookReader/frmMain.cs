@@ -33,5 +33,19 @@ namespace WebBookReader
         {
             blinkBrowser1.Url = AppDomain.CurrentDomain.BaseDirectory + url;
         }
+
+        private void frmMain_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //MessageBox.Show(e.KeyChar.ToString());
+        }
+
+        private void frmMain_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F12) {
+                //blinkBrowser1.ShowDevtools(blinkBrowser1.Url);
+                blinkBrowser1.ShowDevtools(Application.StartupPath + @"\front_end\inspector.html");
+            }
+            //MessageBox.Show(e.KeyCode.ToString());
+        }
     }
 }

@@ -1,8 +1,4 @@
 var $ = layui.$ //重点处;
-var layer = layui.layer;
-var form = layui.form;
-var table = layui.table;
-var element = layui.element;
 
 var selectType = "all";
 var bookTypes = [];
@@ -507,4 +503,8 @@ $(document).ready(function () {
         }, 200);
     }
 
+    var layer = layui.layer;
+    var form = layui.form;
+    var table = layui.table;
+    var element = layui.element;
 });

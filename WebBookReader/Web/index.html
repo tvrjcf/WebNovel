@@ -1,37 +1,198 @@
-﻿<html>
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="GBK">
-    <title>
-        测试页面
-    </title>
-    <script src="js/jquery.js"></script>
-    <script>
-        //TEST("-------" + Date.parse(new Date()))
-        //Console_WriteLine("测试调用后台方法" + Date.parse(new Date()))
-        //ApiTest("-------" + Date.parse(new Date()))
-        function GetBooks() {
-            var books = JSON.parse(GetNovels());;
+    <meta name="generator" content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-            //alert(books);
-            //document.write(books.rows[0].NovelName);
-            $("#list").html("");
-            $(books.rows).each(function (i, book) {
-                $("#list").append("<div id='" + book.NovelID +"'>" + book.NovelName+"</div>")
-            });
-        }
-        $(document).ready(function () {
-            alert("OK");
-        });
-    </script>
+    <title></title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
-<!--设置margin才能显示阴影-->
-<body style="margin:8px;">
-    <div>
-        <input type="button" id="btn" value="GetBooks" onclick="GetBooks()" />
+
+<body scroll="auto">
+    <!--body_start-->
+
+
+    <style type="text/css">
+        * {
+            cursor: default
+        }
+
+        .rightmain {
+            margin-left: 191px;
+            position: relative;
+            height: 100%
+        }
+
+        a {
+            cursor: pointer
+        }
+
+        .blue {
+            cursor: pointer
+        }
+    </style>
+    <Script src="images/scroll/main.js">
+    </Script>
+    <!--首页开始-->
+    <input style="display:none" type=button onclick="location.reload()" value="刷新" style="position:absolute;top:0px;left:0px;z-index:999999" />
+    <div id="main_0" style="display:none">
+        <div id="sidemenu" style="position:relative;z-index:10">
+            <div class="searchbox">
+                <input id="h_search" type="text" size="18" onkeyup="h_Search_Input(1)" value="请输入书名/作者名" onfocus="if (value ==\'请输入书名/作者名\'){value =\'\'}" onblur="if (value ==\'\'){value=\'请输入书名/作者名\'}" />
+                <input onfocus="this.blur()" type="button" class="btn" onclick="h_Search_Input(2)" />
+            </div>
+            <div id="scroll_home">
+                <div class="menus" style="position:relative">
+                    <h3><i class="ico-hot"></i>热门精选</h3>
+                    <ul class="menulist">
+                        <li id="h_menus" style="display:none" onclick="h_changeMenu(this)" _i="0" _focus="current" _blur="">
+                            <a onfocus="this.blur()" href="#" onclick="return false"><i></i>搜索</a>
+                        </li>
+                        <li id="h_menus" onclick="h_changeMenu(this)" _i="1" _focus="current" _blur=""><a onfocus="this.blur()" href="#" onclick="return false"><i></i>我的书架</a></li>
+                        <li id="h_menus" onclick="h_changeMenu(this)" _i="2" _focus="current" _blur=""><a onfocus="this.blur()" href="#" onclick="return false"><i></i>最近阅读</a></li>
+                        <li id="h_menus" onclick="h_changeMenu(this)" _i="3" _focus="current" _blur="">
+                            <a onfocus="this.blur()" href="#" onclick="return false"><i></i>小说排行</a>
+                        </li>
+                    </ul>
+                    <h3><i class="ico-shelf"></i>小说宝库</h3>
+                    <ul class="menulist" id="h_menu_4_li"> </ul>
+                </div>
+            </div>
+        </div>
+        <div id="scroll_home_right" style="position:absolute;z-index:9;left:0px;width:100%;overflow-X:hidden;overflow-Y:scroll">
+            <div class="rightmain" id="h_menu_1" style="display:none">
+                <div id="topbar">
+                    查看排行榜，选几本热书
+                    <a onfocus="this.blur()" href="#" onclick="h_changeMenu(3);return false" class="blue">去选书</a>
+                    <a href="#" id="h_fav_editbutton" onfocus="this.blur()" class="button" onclick="h_fav_editmode(this)">编辑</a>
+                </div>
+                <div class="tosearch" id="h_menu_1_1">
+                    找一本书， 度过愉悦的阅读时光！ <br />
+                    <a href="#" _i="0" onclick="h_changeMenu(3);return false" class="btnsearch"></a>
+                </div>
+                <div class="shelf" id="h_menu_1_2" style="display:none">
+                    <ul class="booklist" id="h_shelf"> </ul>
+                </div>
+            </div>
+            <div class="rightmain" id="h_menu_2" style="display:none"> </div> <div class="rightmain" id="h_menu_3" style="display:none">
+                <div id="topbar" class="toplistbar">
+                    <ul class="topmenu" id="h_menu_top_menu"> </ul> <div class="searchbox" id="h_menu_top_search">
+                        <input id="h_search" style="position:relative;top:-4px;_top:0px" type="text" size="18" onkeyup="h_Search_Input(1)" value="请输入书名/作者名" onfocus="if (value ==\'请输入书名/作者名\'){value =\'\'}" onblur="if (value ==\'\'){value=\'请输入书名/作者名\'}" />
+                        <input onfocus="this.blur()" type="button" onclick="h_Search_Input(2)" class="button" style="position:relative;top:-4px;_top:0px" />
+                    </div>
+                </div> <div id="h_menu_top_home" class="toplistbox"> </div> <div id="h_menu_top_html" style="display:none"> </div>
+            </div> <div class="rightmain" id="h_menu_4" style="display:none"> </div>
+            <div class="rightmain" id="h_menu_0" style="display:none">
+                <div class="mainbox" id="h_menu_0_1">
+                    <div class="mainsearch">
+                        <div class="searchbox">
+                            <input id="h_search" type="text" size="18" onkeyup="h_Search_Input(1)" onkeyup="if(event.keyCode==13) this.nextSibling.click()" value="请输入书名/作者名" onfocus="if (value ==\'请输入书名/作者名\'){value =\'\'}" onblur="if (value ==\'\'){value=\'请输入书名/作者名\'}" />
+                            <input type="button" onclick="h_Search_Input(2)" class="button" />
+                        </div>
+                    </div>
+                </div>
+                <div id="h_menu_0_2" style="display:none;position:relative">
+                    <div id="topbar">
+                        <a href="#" class="goback" onclick="h_changeMenu(main.curMenu_old);return false">返回</a>
+                        <div class="searchbox">
+                            <input id="h_search" onkeyup="h_Search_Input(1)" type="text" size="18" value="请输入书名/作者名" onfocus="if (value ==\'请输入书名/作者名\'){value =\'\'}" onblur="if (value ==\'\'){value=\'请输入书名/作者名\'}" />
+                            <input onfocus="this.blur()" type="button" onclick="h_Search_Input(2)" class="button" />
+                        </div>
+                    </div>
+                    <div class="mainbox" id="h_menu_0_2_data"> </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="list"></div>
+    <!--首页结束-->
+    <!--阅读器开始-->
+    <div id="main_1" style="display:none">
+        <div id="main_1_info" style="display:none">
+            <div id="infomain">
+                <div class="bookinfo">
+                    <div class="bookcover">
+                        <a href="#">
+                            <span></span>
+                            <img id="i_1_pic" onerror="errimg(this)" width="122" height="152" />
+                        </a>
+                    </div> <h3><a href="#" id="i_1_title"></a></h3>
+                    <ul id="i_1_info"> </ul>
+                    <div class="infobtn" id="i_1_button">
+
+                    </div>
+                </div> <div class="infobox">
+                    <h2><strong>内容简介</strong></h2>
+                    <div class="infos" id="i_1_desc"> </div>
+                </div>
+                <h2 class="titgreen" style="display2:none"><strong>最新章节</strong></h2>
+                <ul class="themelist" id="i_1_list_new" style="margin-bottom:-25px"> </ul>
+                <h2 class="titblue">
+                    <strong>章节目录</strong>
+                    <span class="quebox">
+                        <a href="#" id="i_1_sort_zx" class="zxon" onfocus="this.blur()" onclick="r_sortChapter(\'asc\');return false">正序<i></i></a>
+                        <a onfocus="this.blur()" href="#" id="i_1_sort_dx" onclick="r_sortChapter(\'desc\');return false" class="dx">倒序<i></i></a>
+                    </span>
+                </h2> <div class="text-c" id="i_1_loading" style="margin-top:10px"> <img src="images/loading.GIF" width="80" height="80" /> </div>
+                <ul class="themelist" id="i_1_list"> </ul>
+                <a class="showbtn" href="#showbtn" style="display:none" id="i_1_listall" onfocus="this.blur()" onclick="this.style.display=\'none\';main.showall=1;r_sortChapter(main.sort);return false"><i></i>显示全部章节</a>
+            </div>
+        </div>
+        <div id="main_1_reader" style="display:none">
+            <div id="readmain">
+                <div id="bar" class="clearfix" style="position:relative;z-index:999;left:0px">
+                    <a href="#" onfocus=this.blur() onclick="r_change('info');return false" class="back"></a> <div class="left-box">
+                        <div class="searchbox" style="background:;border:1px solid #c6c6c6">
+                            <input id="r_1_url" readonly="readonly" type="text" size="18" />
+                            <input type="button" onfocus="this.blur()" onclick="r_chapterText(main.db.md,'get',main.db.offset)" class="button" />
+                        </div>
+                    </div> <ul class="right-btns" style="position:relative;left:65px">
+                        <li class="icon icon-1" id="r_1_listmin_p">
+                            <div class="listbox">
+                                <span class="topspan"></span>
+                                <ul class="artlist" id="r_1_listmin" style="height:250px;overflow-Y:auto"> </ul> <span class="btmspan"></span>
+                            </div>
+                        </li>
+                        <li class="icon icon-2">
+                            <div id="r_setstyle" class="listbox" ondragstart="return false" onselectstart="return false" onmousemove="r_rrcd_move()" onmouseup="r_rrcd_up()">
+                                <span class="topspan"></span> <div class="artlist fontbox">
+                                    <table border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <th scope="row"> 主题： </th>
+                                            <td class="theme"> <i id="r_1_theme" _v=\'{"theme": 1}\'=1}\' onclick="r_setReaderStyle(this._v)" class="bg1"></i> <i id="r_1_theme" _v=\'{"theme": 2}\'=2}\' onclick="r_setReaderStyle(this._v)" class="bg2"></i> <i id="r_1_theme" _v=\'{"theme": 3}\'=3}\' onclick="r_setReaderStyle(this._v)" class="bg3"></i> <i id="r_1_theme" _v=\'{"theme": 4}\'=4}\' onclick="r_setReaderStyle(this._v)" class="bg4"></i> <i id="r_1_theme" _v=\'{"theme": 5}\'=5}\' onclick="r_setReaderStyle(this._v)" class="bg5"></i> </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row"> 字体： </th>
+                                            <td class="ffamily"> <i id="r_1_fontfamily" _v=\'{"fontfamily": ="宋体" }\'=}\' onclick="r_setReaderStyle(this._v)">宋体</i> <i id="r_1_fontfamily" _v=\'{"fontfamily": ="楷体" }\'=}\' onclick="r_setReaderStyle(this._v)">楷体</i> <i id="r_1_fontfamily" _v=\'{"fontfamily": ="雅黑" }\'=}\' onclick="r_setReaderStyle(this._v)">雅黑</i> </td>
+                                        </tr>
+                                        <tr> <th scope="row"> 字号： </th> <td class="font"> <span class="font1"></span> <em><span id="r_rrcd_fontsize" style="left:-3px" _type="fontsize" _min="-3" _max="120" min="12" max="32" onmousedown="r_rrcd_down(this)"></span></em> <span class="font2"></span> </td> </tr>
+                                        <tr> <th scope="row"> 行高： </th> <td class="font"> <span class="font3"></span> <em><span id="r_rrcd_lineheight" style="left:-3px" _type="lineheight" _min="-3" _max="120" min="100" max="400" onmousedown="r_rrcd_down(this)"></span></em> <span class="font4"></span> </td> </tr>
+                                        <tr> <th scope="row"> 页宽： </th> <td class="font"> <span class="font5"></span> <em><span id="r_rrcd_pagewidth" style="left:-3px" _type="pagewidth" _min="-3" _max="120" min="800" max="1920" onmousedown="r_rrcd_down(this)"></span></em> <span class="font6"></span> </td> </tr>
+                                        <tr> <th scope="row"> &nbsp; </th> <td> <input onfocus="this.blur()" _v=\'{"reset": 1}\'=1}\' onclick="r_setReaderStyle(this._v)" class="button" value="恢复默认设置" /> </td> </tr>
+                                    </table>
+                                </div> <span class="btmspan"></span>
+                            </div>
+                        </li>
+                        <li class="icon icon-3" id="r_1_mode" _v=\'{"mode": 0}\'=0}\' onclick="r_setReaderStyle(this._v)"></li>
+                        <li class="icon icon-4" id="r_1_mode" _v=\'{"mode": 1}\'=1}\' onclick="r_setReaderStyle(this._v)"></li>
+                        <li class="icon icon-5" style="display:none"></li>
+                        <li class="icon icon-6" onclick="r_fullscreen()"></li>
+                    </ul>
+                </div> <div id="read-main" style="margin:0 auto;position:absolute;z-index:998;top:48px;overflow-X:auto;overflow-Y:scroll"> <div style="margin:0 auto"> <h1 class="titles" id="r_1_title">正在获取数据...</h1> <div id="r_1_text"> <div class="text-c" style="margin-left:30px"> <img src="images/loading.GIF" width="80" height="80" /> </div> </div> <div class="pagebtns"> <a href="#" _class="btnpre" onfocus="this.blur()" onclick="if(this.className!=\'\')r_gopage(-1);return false" id="r_1_prev">上一章</a> <a href="#" onfocus="this.blur()" onclick="r_change(\'info\');return false" id="r_1_list" class="btnmenu">打开目录</a> <a href="#" onfocus="this.blur()" _class="btnnext" onclick="if(this.className!=\'\')r_gopage(-2);return false" id="r_1_next">下一章</a> <p> 小提示：按 回车[Enter]键 返回书目，按 ←键 返回上一页， 按 →键 进入下一页。 </p> </div> <div class="notice"> <div class="fl"> <span></span>如果无法阅读？章节内容错误 请查看 </div> <div class="selectbox" id="r_1_same"> </div> </div> </div> </div>
+            </div>
+        </div>
+    </div>
+    < !--阅读器结束-->
+    <div class="tip" id="tips" style="display:none;z-index:2147483647">
+        <h3>提示<a href="#" class="btnclose" onclick="c_tips('hide')"></a></h3>
+        <div class="tipinfo" id="tips_info"></div> <span class="tipbtm"></span>
+    </div>
 
 
-    <table class="layui-hide" id="demo"></table>
+    <!--body_end-->
+    <script>
+
+        init()
+    </script> <img src="http://images.ttxiaoshuo.com/l.gif" style="width:0px;height:0px;display:none" />
 </body>
 </html>
