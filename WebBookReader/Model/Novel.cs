@@ -1,4 +1,6 @@
-﻿namespace WebBookManage.Model
+﻿using System.Collections.Generic;
+
+namespace WebBookManage.Model
 {
     public class Novel : CYQ.Data.Orm.OrmBase
     {
@@ -24,5 +26,6 @@
         public string NeedDelUrl { get; set; }
         public string Brief { get; set; }
         public string BookImg { get; set; }
+        public List<NovelContent> ChapterList { get; set; }
     }
 }

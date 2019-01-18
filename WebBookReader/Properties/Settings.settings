@@ -1,7 +1,21 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WebBookReader.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="RegexConfig" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">{
+	"HtmlToString":[
+		{"pattern": "&lt;\\s*/p&gt;","replacement":"\r\n"},
+		{"pattern": "&lt;br\\s*/&gt;","replacement": "\r\n"},
+		{"pattern": "&amp;nbsp;","replacement":" "},
+		{"pattern": "\\t","replacement":""},
+		{"pattern": "(?is)&lt;.*?&gt;","replacement":""}
+	],
+	"StringToHtml":[
+		{"pattern": "","replacement":""},
+		{"pattern": "","replacement":""}
+	]
+}</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

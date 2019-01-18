@@ -95,6 +95,7 @@
     <Compile Include="Model\Novel.cs" />
     <Compile Include="Model\NovelContent.cs" />
     <Compile Include="Model\NovelType.cs" />
+    <Compile Include="Common\RegexReplace.cs" />
     <Compile Include="Model\SiteSign.cs" />
     <Compile Include="Model\ThemeModel.cs" />
     <Compile Include="Program.cs" />

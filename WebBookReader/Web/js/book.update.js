@@ -94,9 +94,9 @@ function Init() {
                         //layer.close(index);
                         layerMsg('开始下载...');
                         $(downLoadData).each(function (j, down) {
-                            if (item.Key == down.Id) {
+                            //if (item.Key == down.Id) {
                                 down.Info = "";
-                            }
+                            //}
                         });
                         SetProgressValue(0);
                         var ret = parent.DownLoadContent(JSON.stringify(data));

@@ -1,5 +1,6 @@
 ﻿using CYQ.Data;
 using CYQ.Data.Table;
+using CYQ.Data.Tool;
 using CYQ.Data.Xml;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace WebBookManage.Common
         public static string DIR_PATH_NOVEL = @"chm\{0}";    //
         public static string FILE_PATH_LIST_MODEL = @"chm\{0}\List.htm";    //
         public static string FILE_PATH_CHAPTER_MODEL = @"chm\{0}\{1}.htm";  //
+        public static string FILE_PATH_LIST = @"chm\{0}\list.json";    //
+        public static string FILE_PATH_CHAPTER = @"chm\{0}\{1}.json";  //
         private string T_Novel = "book_Novel";
         private string T_NovelContent = "book_NovelContent";
 
@@ -614,6 +617,12 @@ namespace WebBookManage.Common
                 ;
             string saveFileName = string.Format(FILE_PATH_LIST_MODEL, novel.NovelID);
             CommonHelper.SaveToFile(saveFileName, listHtml);
+
+            //保存为json文件
+            novel.ChapterList = new List<NovelContent>();
+            novel.ChapterList.AddRange(menulist);
+            saveFileName = string.Format(FILE_PATH_LIST, novel.NovelID);
+            CommonHelper.SaveToFile(saveFileName, JsonHelper.ToJson(novel));
 
             //UpdateResult(0, "章节列表生成完成");
             #endregion

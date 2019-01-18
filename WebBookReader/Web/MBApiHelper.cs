@@ -193,6 +193,18 @@ namespace WebBookReader.Web
             return jsonData;
         }
 
+        /// <summary>
+        /// 制作EBook
+        /// </summary>
+        /// <param name="novelId"></param>
+        /// <returns></returns>
+        [JSFunctin]
+        public string CreateEBook(string novelId)
+        {
+            var txt = BH.CreateEBook(novelId, EbookType.TXT);
+            return txt;
+        }
+
         private int CompletedCount = 0;
         private int TotalCount = 0;
         private string chapterModel = string.Empty;

@@ -1,8 +1,11 @@
 ﻿using DotNet4.Utilities;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using WebBookReader.Properties;
 
 namespace WebBookManage.Common
 {
@@ -39,7 +42,7 @@ namespace WebBookManage.Common
         /// <returns></returns> 
         public static string GetValue(string str, string s, string e)
         {
-            if(s == null) s = "";
+            if (s == null) s = "";
             if (e == null) e = "";
             Regex rg = new Regex("(?<=(" + s.Replace("\r", "") + "))[.\\s\\S]*?(?=(" + e.Replace("\r", "") + "))", RegexOptions.Multiline | RegexOptions.Singleline);
             return rg.Match(str).Value;
@@ -139,6 +142,57 @@ namespace WebBookManage.Common
             return html;
         }
 
+        private static void SaveRegexConfig()
+        {
+            var config = new RegexConfig();
+            config.HtmlToString = new List<RegexReplace>() {
+                new RegexReplace() { pattern = @"<\s*/p>", replacement = @"\r\n", RegexOptions = (int)RegexOptions.IgnoreCase },
+                new RegexReplace() { pattern = @"<br\s*/>", replacement = @"\r\n", RegexOptions = (int)RegexOptions.IgnoreCase }
+            };
+            config.StringToHtml = new List<RegexReplace>() {
+                new RegexReplace() { pattern = "", replacement = "", RegexOptions = (int)RegexOptions.IgnoreCase },
+                new RegexReplace() { pattern = "", replacement = "", RegexOptions = (int)RegexOptions.IgnoreCase }
+            };
+            var jsonStr = JsonConvert.SerializeObject(config);
+            SaveToFile("RegexConfig.json", jsonStr);
+        }
 
+        /// <summary>
+        /// HTML转为TEXT
+        /// </summary>
+        /// <param name="html"></param>
+        /// <returns></returns>
+        public static string HtmlToText(string html)
+        {
+            
+
+            var strRegexConfig = Settings.Default.RegexConfig;
+            var regexConfig = JsonConvert.DeserializeObject<RegexConfig>(strRegexConfig);
+            foreach (var item in regexConfig.HtmlToString)
+            {
+                if (string.IsNullOrEmpty(item.pattern))
+                    continue;
+                html = Regex.Replace(html, item.pattern, item.replacement, RegexOptions.IgnoreCase);
+            }
+            return html;
+        }
+
+        /// <summary>
+        /// TEXT转为HTML
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string TextToHtml(string html)
+        {
+            var strRegexConfig = Settings.Default.RegexConfig;
+            var regexConfig = JsonConvert.DeserializeObject<RegexConfig>(strRegexConfig);
+            foreach (var item in regexConfig.StringToHtml)
+            {
+                if (string.IsNullOrEmpty(item.pattern))
+                    continue;
+                html = Regex.Replace(html, item.pattern, item.replacement, RegexOptions.IgnoreCase);
+            }
+            return html;
+        }
     }
 }

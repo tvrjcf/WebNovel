@@ -1,10 +1,13 @@
-﻿namespace WebBookManage.Model
+﻿using System.Collections.Generic;
+
+namespace WebBookManage.Model
 {
     public class Novel : CYQ.Data.Orm.OrmBase
     {
         public Novel()
         {
             base.SetInit(this, "book_Novel");
+            //ChapterList = new List<NovelContent>();
         }
         public string NovelID { get; set; }
         public string NovelName { get; set; }
@@ -24,5 +27,7 @@
         public string NeedDelUrl { get; set; }
         public string Brief { get; set; }
         public string BookImg { get; set; }
+        public List<NovelContent> ChapterList { get; set; }
+
     }
 }

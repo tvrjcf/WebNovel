@@ -169,7 +169,7 @@ function BindBookEvent() {
                 layer.msg('书籍同步', {
                     time: 0 //不自动关闭
                     , content: '书籍同步'
-                    , btn: ['更新', '下载', '取消']
+                    , btn: ['更新', '下载', '制作TXT', '取消']
                     , yes: function (index, layero) {
                         UpdateBook(key, bookname);
                     }
@@ -177,6 +177,9 @@ function BindBookEvent() {
                         DownLoadBook(key, bookname);
                     }
                     , btn3: function (index, layero) {
+                        CreateTXTBook(key, bookname);
+                    }
+                    , btn4: function (index, layero) {
                         //按钮【按钮三】的回调
 
                         //return false 开启该代码可禁止点击该按钮关闭
@@ -300,6 +303,18 @@ function UpdateBook(key, bookname) {
  * @param {string} key 书籍Id
  * @param {string} bookname 书籍名称
  */
+function CreateTXTBook(key, bookname) {
+    var result = CreateEBook(key);
+    
+    layerAlert(result);
+    
+}
+
+/**
+ * 制作电子书籍
+ * @param {string} key 书籍Id
+ * @param {string} bookname 书籍名称
+ */
 function DownLoadBook(key, bookname) {
     downLoadData = [];
     var result = JSON.parse(GetNovelContents(key));
@@ -311,6 +326,7 @@ function DownLoadBook(key, bookname) {
     else
         ShowDownLoadWin(downLoadData, '目录列表', 'book_down.html');
 }
+
 /**
  * 删除书籍
  * @param {string} key 书籍Id

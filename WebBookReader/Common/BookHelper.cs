@@ -17,9 +17,14 @@ namespace WebBookManage.Common
 {
     public class BookHelper
     {
+        public static SaveType SAVE_TYPE = SaveType.Txt;
         public static string DIR_PATH_NOVEL = @"chm\{0}";    //
         public static string FILE_PATH_LIST_MODEL = @"chm\{0}\List.htm";    //
         public static string FILE_PATH_CHAPTER_MODEL = @"chm\{0}\{1}.htm";  //
+        public static string FILE_PATH_LIST_JOSN = @"chm\{0}\list.json";    //
+        public static string FILE_PATH_CHAPTER_JOSN = @"chm\{0}\{1}.json";  //
+        public static string FILE_PATH_LIST_TXT = @"chm\{0}\list.json";    //
+        public static string FILE_PATH_CHAPTER_TXT = @"chm\{0}\{1}.txt";  //
         private string T_Novel = "book_Novel";
         private string T_NovelContent = "book_NovelContent";
 
@@ -694,6 +699,11 @@ namespace WebBookManage.Common
             string saveFileName = string.Format(FILE_PATH_LIST_MODEL, novel.NovelID);
             CommonHelper.SaveToFile(saveFileName, listHtml);
 
+            //保存为json文件
+            novel.ChapterList = new List<NovelContent>();
+            novel.ChapterList.AddRange(menulist);
+            saveFileName = GetListFileName(SAVE_TYPE, novel.NovelID);
+            CommonHelper.SaveToFile(saveFileName, JsonHelper.ToJson(novel), Encoding.UTF8);
             //UpdateResult(0, "章节列表生成完成");
             #endregion
 
@@ -712,7 +722,8 @@ namespace WebBookManage.Common
         /// <returns></returns>
         public string SaveNovelContentToHtml(Novel novel, ref NovelContent menu, string modelContent, NovelContent priorMenu, NovelContent nextMenu, ref string downLoadMsg, bool skipExist = true)
         {
-            string saveFileName = string.Format(FILE_PATH_CHAPTER_MODEL, menu.NovelID, menu.Id);
+            //string saveFileName = string.Format(FILE_PATH_CHAPTER_MODEL, menu.NovelID, menu.Id);
+            string saveFileName = GetChapterFileName(SAVE_TYPE, menu.NovelID, menu.Id);
             //跳过已下载的章节
             if (skipExist && File.Exists(saveFileName))
             {
@@ -721,6 +732,7 @@ namespace WebBookManage.Common
             }
             string html = CommonHelper.GetHtml(menu.ComeFrom);
             string content = CommonHelper.GetValue(html, novel.ContentStart, novel.ContentEnd);
+            content = Regex.Replace(content, @"<script[^>]*?>.*?</script>", "", RegexOptions.IgnoreCase);
 
             if (html.Contains("操作超时") && content.Length == 0)
             {
@@ -729,18 +741,28 @@ namespace WebBookManage.Common
                 Console.WriteLine(string.Format("操作超时 - > {0}-{1}", menu.Id, menu.Title));
             }
 
-            CommonHelper.SaveToFile(
-                saveFileName,
-                modelContent
-                .Replace(@"[[title]]", menu.Title)
-                .Replace(@"[[Content]]", Regex.Replace(content, @"<script[^>]*?>.*?</script>", "", RegexOptions.IgnoreCase))
-                .Replace(@"Prior.htm", string.Format("{0}.htm", priorMenu == null ? "List" : priorMenu.Id.ToString()))
-                .Replace(@"Next.htm", string.Format("{0}.htm", nextMenu == null ? "List" : nextMenu.Id.ToString()))
-                );
 
             menu.DownDate = DateTime.Now;
             menu.DownTime = DateTime.Now;
             menu.WordNums = content.Length;
+
+            CommonHelper.SaveToFile(
+                saveFileName,
+                modelContent
+                .Replace(@"[[title]]", menu.Title)
+                .Replace(@"[[Content]]", content)
+                .Replace(@"Prior.htm", string.Format("{0}.htm", priorMenu == null ? "List" : priorMenu.Id.ToString()))
+                .Replace(@"Next.htm", string.Format("{0}.htm", nextMenu == null ? "List" : nextMenu.Id.ToString()))
+                );
+            //保存为json文件
+
+            content = CommonHelper.HtmlToText(content);
+            
+            //content = Regex.Replace(content, @"<\s*/p>", "\r\n", RegexOptions.IgnoreCase);
+            //content = Regex.Replace(content, @"<br\s*/>", "\r\n", RegexOptions.IgnoreCase);
+            //content = Regex.Replace(content, @"&nbsp;", " ", RegexOptions.IgnoreCase);
+            //content = Regex.Replace(content, @"\t", "", RegexOptions.IgnoreCase);
+            CommonHelper.SaveToFile(saveFileName, content, Encoding.UTF8);
 
             return Path.GetFullPath(saveFileName);
         }
@@ -812,7 +834,8 @@ namespace WebBookManage.Common
         /// <returns></returns>
         public bool IsDownLoad(string novelID, int menuId)
         {
-            string fileName = string.Format(FILE_PATH_CHAPTER_MODEL, novelID, menuId);
+            string fileName = GetChapterFileName(SAVE_TYPE, novelID, menuId);
+            
             return File.Exists(fileName);
         }
 
@@ -862,22 +885,23 @@ namespace WebBookManage.Common
                 int processedCount = 0; //已处理数
                 foreach (NovelContent menu in listNovelContent)
                 {
-                    string strFileName = string.Format(FILE_PATH_CHAPTER_MODEL, menu.NovelID, menu.Id);
+                    //string strFileName = string.Format(FILE_PATH_CHAPTER_MODEL, menu.NovelID, menu.Id);
+                    string strFileName = GetChapterFileName(SAVE_TYPE, menu.NovelID, menu.Id);
                     if (File.Exists(strFileName))
                     {
                         string fileContent = CommonHelper.LoadHtmlFile(strFileName);
-                        //获取正文内容，处理换行、空格符等
-                        string txtContent = CommonHelper.GetValue(fileContent, @"<!--BookContent Start-->", "<!--BookContent End-->")
-                            //.Replace("<p>", "\t")
-                            .Replace("</p>", "\r\n")
-                            .Replace("<br />", "\r\n")
-                            .Replace("<br/>", "\r\n")
-                            .Replace("&nbsp;", " ")
-                            .Replace("\t", "")
-                            ;
-                        //使用正则剔除html标签
-                        txtContent = Regex.Replace(txtContent, "(?is)<.*?>", "");
-
+                        ////获取正文内容，处理换行、空格符等
+                        //string txtContent = CommonHelper.GetValue(fileContent, @"<!--BookContent Start-->", "<!--BookContent End-->");
+                        //    //.Replace("<p>", "\t")
+                        //    .Replace("</p>", "\r\n")
+                        //    .Replace("<br />", "\r\n")
+                        //    .Replace("<br/>", "\r\n")
+                        //    .Replace("&nbsp;", " ")
+                        //    .Replace("\t", "")
+                        //    ;
+                        ////使用正则剔除html标签
+                        //txtContent = Regex.Replace(txtContent, "(?is)<.*?>", "");
+                        string txtContent = CommonHelper.HtmlToText(fileContent);
                         txtBuilder.Append("\r\n");
                         txtBuilder.Append("\r\n");
                         txtBuilder.Append(menu.Title);
@@ -895,5 +919,64 @@ namespace WebBookManage.Common
             }
             return "";
         }
+
+        /// <summary>
+        /// 获取目录文件路径
+        /// </summary>
+        /// <param name="saveType"></param>
+        /// <param name="novelID"></param>
+        /// <returns></returns>
+        public string GetListFileName(SaveType saveType, string novelID)
+        {
+            string fileName = string.Empty;
+            switch (saveType)
+            {
+                case SaveType.Html:
+                    fileName = string.Format(FILE_PATH_LIST_MODEL, novelID); ;
+                    break;
+                case SaveType.Txt:
+                    fileName = string.Format(FILE_PATH_LIST_TXT, novelID);
+                    break;
+                case SaveType.Json:
+                    fileName = string.Format(FILE_PATH_LIST_JOSN, novelID);
+                    break;
+                default:
+                    break;
+            }
+            return fileName;
+        }
+
+        /// <summary>
+        /// 获取章节文件路径
+        /// </summary>
+        /// <param name="saveType"></param>
+        /// <param name="novelID"></param>
+        /// <param name="menuId"></param>
+        /// <returns></returns>
+        public string GetChapterFileName(SaveType saveType, string novelID, int menuId)
+        {
+            string fileName = string.Empty;
+            switch (saveType)
+            {
+                case SaveType.Html:
+                    fileName = string.Format(FILE_PATH_CHAPTER_MODEL, novelID, menuId);
+                    break;
+                case SaveType.Txt:
+                    fileName = string.Format(FILE_PATH_CHAPTER_TXT, novelID, menuId);
+                    break;
+                case SaveType.Json:
+                    fileName = string.Format(FILE_PATH_CHAPTER_JOSN, novelID, menuId);
+                    break;
+                default:
+                    break;
+            }
+            return fileName;
+        }
+    }
+
+    public enum SaveType {
+        Html = 0,
+        Txt = 1,
+        Json = 2
     }
 }
