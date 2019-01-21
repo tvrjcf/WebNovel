@@ -4,7 +4,7 @@ var form = layui.form;
 var table = layui.table;
 var element = layui.element;
 
-var book = JSON.parse(localStorage.getItem("editbook"));    //parent.updateList;
+var sign = JSON.parse(localStorage.getItem("sitesign"));    //parent.updateList;
 var listUrl = "";
 
 function layerAlert(msg) {
@@ -15,62 +15,51 @@ function layerMsg(msg) {
 }
 
 function Init() {
-    if (parent.bookTypes != null) {
-        $("#LB").empty();
-        $(parent.bookTypes).each(function (i, item) {
-            $("#LB").append("<option value='" + item.DM + "'>" + item.MC + "</option>");
-        });
-    }
+    //if (parent.bookTypes != null) {
+    //    $("#LB").empty();
+    //    $(parent.bookTypes).each(function (i, item) {
+    //        $("#LB").append("<option value='" + item.DM + "'>" + item.MC + "</option>");
+    //    });
+    //}
 
-    if (book != null) {
-        BindForm(book);
-        BindSign(book.ListUrl);
+    if (sign != null) {
+        BindSign(sign.url);
     }
 
     //$("#ListUrl").on('change', function () {
     //    listUrl = $("#ListUrl").val();
     //});
 
-    $("#ListUrl").on('blur', function () {
-        var url = $("#ListUrl").val();
+    $("#url").on('blur', function () {
+        var url = $(this).val();
         BindSign(url);
     });
 
-    $(".btn-http-change").on('click', function () {
-        var url = $("#ListUrl").val();
-        var novelId = $("#NovelID").val();
-        //layerMsg(parent.ChangeHttpMode(url, novelId) == -1);
-        if (parent.ChangeHttpMode(url, novelId) == 1) {
-            layerMsg("切换成功!");
-            if (url.indexOf("https") >= 0) {
-                url = url.replace("https", "http");
-            } else {
-                url = url.replace("http", "https");
+    //$(".btn-http-change").on('click', function () {
+    //    var url = $("#ListUrl").val();
+    //    var novelId = $("#NovelID").val();
+    //    //layerMsg(parent.ChangeHttpMode(url, novelId) == -1);
+    //    if (parent.ChangeHttpMode(url, novelId) == 1) {
+    //        layerMsg("切换成功!");
+    //        if (url.indexOf("https") >= 0) {
+    //            url = url.replace("https", "http");
+    //        } else {
+    //            url = url.replace("http", "https");
 
-            }
+    //        }
 
-            $("#ListUrl").val(url);
-        }
-    });
-
-    $(".btn-sign-get").on('click', function () {
-        var url = $("#ListUrl").val();
-        BindSign(url);
-    });
-
-    //$(".btn-sign-save").on('click', function () {
-
-    //    var result = JSON.parse(parent.SaveSiteSign(JSON.stringify(data.field)));
-    //    if (!result.Success) {
-    //        layerAlert(result.Message); return false;
-    //    }        
-    //    layerMsg("正文标志已保存!");
-    //    return false;
+    //        $("#ListUrl").val(url);
+    //    }
     //});
 
-    $(".btn-sign-manage").on('click', function () {
+    //$(".btn-sign-get").on('click', function () {
+    //    var url = $("#ListUrl").val();
+    //    BindSign(url);
+    //});
+    
+    //$(".btn-sign-manage").on('click', function () {
         
-    });
+    //});
 }
 
 /**
@@ -81,13 +70,16 @@ function BindForm(data) {
     //alert(JSON.stringify(data));
     //表单初始赋值
     form.val('form', {
-        "NovelID": data.NovelID
-        , "NovelName": data.NovelName
-        , "ListUrl": data.ListUrl
-        , "LB": data.LB
-        , "Author": data.Author
-        , "Brief": data.Brief
-        , "BookImg": data.BookImg
+        "name": data.name
+        , "url": data.url
+        , "BriefUrlStart": data.BriefUrlStart
+        , "BriefUrlEnd": data.BriefUrlEnd
+        , "AuthorStart": data.AuthorStart
+        , "AuthorEnd": data.AuthorEnd
+        , "BookImgUrlStart": data.BookImgUrlStart
+        , "BookImgUrlEnd": data.BookImgUrlEnd
+        , "BriefStart": data.BriefStart
+        , "BriefEnd": data.BriefEnd
         , "ListStart": data.ListStart
         , "ListEnd": data.ListEnd
         , "VolumeStart": data.VolumeStart
@@ -104,9 +96,12 @@ function BindForm(data) {
  * @param {string} url
  */
 function BindSign(url) {
-    if ((url && url.length == 0) || listUrl == url) return false;
+    if (url.length == 0 || listUrl == url) return false;
+    listUrl = url;
     var sign = JSON.parse(parent.GetSiteSign(url));
     if (sign && sign.url) {
+        $("#name").val(sign.name);
+        $("#url").val(sign.url);
         $("#ContentStart").val(sign.ContentStart);
         $("#ContentEnd").val(sign.ContentEnd);
         $("#ListStart").val(sign.ListStart);
@@ -125,7 +120,6 @@ function BindSign(url) {
         $("#BriefEnd").val(sign.BriefEnd);
 
         layerMsg("标志取出成功");
-        listUrl = url;
     } else {
         layerMsg("还未收录过该站点标志信息");
     }
@@ -133,16 +127,19 @@ function BindSign(url) {
 
 //监听提交
 form.on('submit(formSubmit)', function (data) {
-    //layer.alert(JSON.stringify(data.field), {
-    //    title: '最终的提交信息'
-    //});
-    var result = JSON.parse(parent.SaveNovel(JSON.stringify(data.field)));
+    //var result = JSON.parse(parent.SaveNovel(JSON.stringify(data.field)));
+    //if (!result.Success) {
+    //    layerAlert(result.Message); return false;
+    //}
+    //var save = JSON.parse(result.Data);
+    //parent.ReflushBook(new Array(save));
+    //layerMsg("保存成功!\n" + "[" + save.NovelID + "][" + save.NovelName + "]");
+
+    var result = JSON.parse(parent.SaveSiteSign(JSON.stringify(data.field)));
     if (!result.Success) {
         layerAlert(result.Message); return false;
     }
-    var save = JSON.parse(result.Data);
-    parent.ReflushBook(new Array(save));
-    layerMsg("保存成功!\n" + "[" + save.NovelID + "][" + save.NovelName + "]");
+    layerMsg("正文标志已保存!");
     return false;
 });
 

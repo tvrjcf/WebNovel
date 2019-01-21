@@ -74,12 +74,17 @@ namespace WebBookReader.Web
             try
             {
                 var novel = JsonHelper.ToEntity<Novel>(data);
-                //if (novel.NovelID == "0")
-                //    result.Success = novel.Insert(true, CYQ.Data.InsertOp.ID);
-                //else
-                //    result.Success = novel.Update(string.Format("NovelID='{0}'", novel.NovelID));
-                //if (!result.Success) throw new ValidationException(novel.DebugInfo);
+                if (novel.ListUrl.Length == 0)
+                    throw new ValidationException("网站地址不能为空");
                 var save = BH.SaveNovel(novel);
+
+                //保存正文标记
+                string rootUrl = CommonHelper.GetWebRootUrl(novel.ListUrl);
+                var sign = JsonHelper.ToEntity<SiteSign>(data);
+                sign.name = rootUrl;
+                sign.url = rootUrl;
+                BH.SignToJson(sign);
+
                 result.Success = true;
                 result.Data = JsonHelper.ToJson(save, false);
             }
@@ -130,7 +135,7 @@ namespace WebBookReader.Web
             {
                 var idList = JsonConvert.DeserializeObject<List<int>>(ids);
                 BH.DelNovelContents(idList);
-                
+
                 result.Success = true;
                 result.Data = ids;
             }
@@ -154,6 +159,32 @@ namespace WebBookReader.Web
             try
             {
                 var data = JsonHelper.ToJson(BH.GetNovelContents(novelId).ToList<NovelContent>(), false).Replace("null", "\"\"");
+                result.Success = true;
+                result.Data = data;
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = ex.GetBaseException().Message;
+            }
+            //var jsonData = JsonHelper.ToJson(result);
+            var jsonData = JsonConvert.SerializeObject(result);
+            return jsonData;
+        }
+
+        /// <summary>
+        /// 获取榜单列表
+        /// </summary>
+        [JSFunctin]
+        public string GetChartsList(string url, string hrefPattern)
+        {
+            var result = new Result();
+            try
+            {
+                //var url = "http://www.hebao22.com/qitaleixing/";
+                //var hrefPattern = @"/book/\d+/";
+                var list = BH.GetChartsList(url, hrefPattern);
+                var data = JsonHelper.ToJson(list, false).Replace("null", "\"\"");
                 result.Success = true;
                 result.Data = data;
             }
@@ -254,7 +285,7 @@ namespace WebBookReader.Web
                 foreach (var item in downList)
                 {
                     //item.Id = tepmId++;
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(DownLoad), item);
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(Thread_DownLoadContent), item);
                 }
                 //MB.InvokeJS("SetProgressValue(50)");
 
@@ -266,45 +297,105 @@ namespace WebBookReader.Web
 
             return "0";
         }
-        private void DownLoad(object o)
+        private void Thread_DownLoadContent(object o)
         {
             var menu = o as NovelContent;
             try
             {
-                //if (IsBreak)
-                //{
-                //    //eventX.Set();
-                //    Console.WriteLine(string.Format("下载中止-> {0}//{1} - <<{2}>>", menuList.Count, CompletedCount, menu.Title));
-                //}
-                //else
-                //{
                 var dlmsg = string.Empty;
                 var prior = BH.GetPrior(menuList, menu.Id);
                 var next = BH.GetNext(menuList, menu.Id);
-                var result = BH.SaveNovelContentToHtml(novel, ref menu, chapterModel, prior, next,ref dlmsg, true);
-                //    Console.WriteLine(result);
-                //    lock (lockObj)
-                //    {
-                //        successList.Add(menu);
-                //    }
-                //    this.Invoke(new EventHandler(delegate { UpdateResult(menu.Id, string.Format("已下载 {0}", menu.Title, Thread.CurrentThread.Name)); }));
-                //    //this.Invoke(new Action<int, string>(UpdateResult), menu.Id, string.Format("已下载 {0}", menu.Title, Thread.CurrentThread.Name));
+                var result = BH.SaveNovelContentToHtml(novel, ref menu, chapterModel, prior, next, ref dlmsg, true);
 
-                //Thread.Sleep(500);
-                //}
                 if (!string.IsNullOrEmpty(dlmsg))
                     throw new ValidationException(dlmsg);
             }
             catch (Exception ex)
             {
-                erroList.Add(new Result() { Data = JsonHelper.ToJson(menu),Key = menu.Id, Success = false, Message = ex.GetBaseException().Message });
+                erroList.Add(new Result() { Data = JsonHelper.ToJson(menu), Key = menu.Id, Success = false, Message = ex.GetBaseException().Message });
                 Console.WriteLine(string.Format("下载异常-> <<{0}>> -> {1}", menu.Title, ex.GetBaseException().Message));
                 //this.Invoke(new Action<int, string>(UpdateResult), menu.Id, string.Format("异常 {0}", ex.Message));
             }
             finally
             {
                 Interlocked.Increment(ref CompletedCount);
+                //CompleteEvent(menu);
+            }
+        }
 
+        /// <summary>
+        /// 下载榜单
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [JSFunctin]
+        public string DownLoadCharts(string data)
+        {
+
+            try
+            {
+                var novelList = JsonHelper.ToList<Novel>(data);
+                CommonHelper.CreateDirectory(@"charts");
+                CommonHelper.SaveToFile(@"charts\charts.json", data, Encoding.UTF8);
+                //BH.SaveNovelContents(downList);
+                foreach (var novel in novelList)
+                {
+                    CommonHelper.CreateDirectory(string.Format(@"charts\{0}", novel.NovelID));
+                    var html = CommonHelper.GetHtml(novel.ListUrl);
+                    novel.ChapterList = BH.GetMenuList(html, novel.NovelID, novel.ListUrl);
+
+                    CompletedCount = 0;
+                    TotalCount = novel.ChapterList.Count;
+                    if (TotalCount == 0)
+                        return "-1";
+                    chapterModel = BH.GetChapterModel();
+                    var novelId = novel.NovelID;
+                    //novel = BH.GetNovel(novelId);
+                    menuList = novel.ChapterList;
+                    erroList = new List<Result>();
+
+                    #region 生成章节列表
+                    var saveFileName = string.Format(@"charts\{0}\list.json", novel.NovelID);
+                    CommonHelper.SaveToFile(saveFileName, JsonHelper.ToJson(novel), Encoding.UTF8);
+                    Console.WriteLine(string.Format("已生成[{0}]目录", novel.NovelName));
+                    #endregion
+
+                    int tepmId = 0;
+                    foreach (var item in novel.ChapterList)
+                    {
+                        item.Id = tepmId++;
+                        ThreadPool.QueueUserWorkItem(new WaitCallback(Thread_DownLoadChartsContent), item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.GetBaseException().Message;
+            }
+
+            return "0";
+        }
+
+        private void Thread_DownLoadChartsContent(object o)
+        {
+            var menu = o as NovelContent;
+            try
+            {
+                var dlmsg = string.Empty;
+                var result = BH.SaveChartsContentToJson(ref menu, ref dlmsg, true);
+
+                if (!string.IsNullOrEmpty(dlmsg))
+                    throw new ValidationException(dlmsg);
+            }
+            catch (Exception ex)
+            {
+                erroList.Add(new Result() { Data = JsonHelper.ToJson(menu), Key = menu.Id, Success = false, Message = ex.GetBaseException().Message });
+                Console.WriteLine(string.Format("下载异常-> <<{0}>> -> {1}", menu.Title, ex.GetBaseException().Message));
+                //this.Invoke(new Action<int, string>(UpdateResult), menu.Id, string.Format("异常 {0}", ex.Message));
+            }
+            finally
+            {
+                Interlocked.Increment(ref CompletedCount);
                 //CompleteEvent(menu);
             }
         }
@@ -340,7 +431,8 @@ namespace WebBookReader.Web
         /// <param name="url"></param>
         /// <param name="novelId"></param>
         [JSFunctin]
-        public int ChangeHttpMode(string url, string novelId) {
+        public int ChangeHttpMode(string url, string novelId)
+        {
 
             //var listUrl = txtListUrl.Text;
             if (string.IsNullOrEmpty(url))
@@ -380,36 +472,17 @@ namespace WebBookReader.Web
             var result = new Result();
             try
             {
-                var novel = JsonHelper.ToEntity<Novel>(data);
-                if (novel.ListUrl.Length == 0)
+                var sign = JsonHelper.ToEntity<SiteSign>(data);
+                if (sign.url.Length == 0)
                     throw new ValidationException("网站地址不能为空");
-                string rootUrl = CommonHelper.GetWebRootUrl(novel.ListUrl);
-                var sign = BH.GetSiteSign(rootUrl);
-                if (sign == null)
-                {
-                    sign = new WebBookManage.Model.SiteSign()
-                    {
-                        name = rootUrl,
-                        url = rootUrl,
-                        ListStart = novel.ListStart,
-                        ListEnd = novel.ListEnd,
-                        ContentStart = novel.ContentStart,
-                        ContentEnd = novel.ContentEnd,
-                        NeedDelStr = novel.NeedDelStr,
-                        VolumeStart = novel.VolumeStart,
-                        VolumeEnd = novel.VolumeEnd,
-                        BriefUrlStart = "",
-                        BriefUrlEnd = "",
-                        AuthorStart = "",
-                        AuthorEnd = "",
-                        BriefStart = "",
-                        BriefEnd = "",
-                        BookImgUrlStart = "",
-                        BookImgUrlEnd = ""
-                    };
-                }
+                string rootUrl = CommonHelper.GetWebRootUrl(sign.url);
+                if (rootUrl.Length == 0)
+                    throw new ValidationException("该网址无效");
+
+                //sign.name = rootUrl;
+                sign.url = rootUrl;
+
                 BH.SignToJson(sign);
-                //var save = BH.SaveNovel(novel);
                 result.Success = true;
                 result.Data = JsonHelper.ToJson(sign, false);
             }
@@ -423,7 +496,8 @@ namespace WebBookReader.Web
         }
 
         [JSFunctin]
-        public int IsExists(string filePath) {
+        public int IsExists(string filePath)
+        {
             if (File.Exists(filePath))
                 return 1;
             return -1;
@@ -436,5 +510,10 @@ namespace WebBookReader.Web
         public string Message = string.Empty;
         public object Data = false;
         public object Key;
+    }
+
+    public class ThreadArgs {
+        public object arg1 { get;set; }
+        public object arg2 { get; set; }
     }
 }

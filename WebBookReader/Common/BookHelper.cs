@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -25,6 +26,8 @@ namespace WebBookManage.Common
         public static string FILE_PATH_CHAPTER_JOSN = @"chm\{0}\{1}.json";  //
         public static string FILE_PATH_LIST_TXT = @"chm\{0}\list.json";    //
         public static string FILE_PATH_CHAPTER_TXT = @"chm\{0}\{1}.txt";  //
+        public static string FILE_PATH_CHARTS_LIST_JSON = @"charts\{0}\list";    //
+        public static string FILE_PATH_CHARTS_CHAPTER_JSON = @"charts\{0}\{1}";  //
         private string T_Novel = "book_Novel";
         private string T_NovelContent = "book_NovelContent";
 
@@ -175,6 +178,50 @@ namespace WebBookManage.Common
                 }
             }
             return maxid;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chartsUrl"></param>
+        /// <param name="hrefReg">链接特征</param>
+        /// <returns></returns>
+        public List<Novel> GetChartsList(string chartsUrl, string hrefPattern)
+        {
+            var rootUrl = CommonHelper.GetWebRootUrl(chartsUrl);
+            string html = CommonHelper.GetHtml(chartsUrl);
+            var list = new List<Novel>();
+            //string prttern = "<a(\\s+(href=\"(?<url>([^\"])*)\"|'([^'])*'|\\w+=\"(([^\"])*)\"|'([^'])*'))+>(?<text>(.*?))</a>";
+            string prttern = "<a(\\s+(href=\"(?<url>([^\"])*)\"|'([^'])*'|\\w+=\"(([^\"])*)\"|'([^'])*'))+>(?<text>(.*?))</a>";
+            var maths = Regex.Matches(html, prttern);
+            var hrefReg = new Regex(hrefPattern, RegexOptions.IgnoreCase);
+            for (int i = 0; i < maths.Count; i++)
+            {
+                string url = new Uri(new Uri(rootUrl), maths[i].Groups["url"].Value).ToString();
+                string text = maths[i].Groups["text"].Value;
+                if (url.Contains(".htm") || url.Contains(".html"))
+                    continue;
+                if (url.LastIndexOf('/') != url.Length - 1)
+                    continue;
+                if (!string.IsNullOrEmpty(hrefPattern) && !hrefReg.IsMatch(url) || string.IsNullOrEmpty(CommonHelper.HtmlToText(text)))
+                    continue;
+                if (list.FindIndex(p => p.ListUrl == url.Trim()) >= 0)
+                    continue;
+                var novel = new Novel()
+                {
+                    NovelID = Guid.NewGuid().ToString("N"),
+                    ListUrl = url.Trim(),
+                    NovelName = text,
+                    Author = "",
+                    LB = "07",
+                    Brief = text
+                };
+                list.Add(novel);
+
+            }
+            return list;
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -539,7 +586,7 @@ namespace WebBookManage.Common
             //var xml = new XmlDocument();
             //xml.Load(@"SiteSign.xml");
             //var json = Newtonsoft.Json.JsonConvert.SerializeXmlNode(xml.DocumentElement);
-            var json = File.ReadAllText(saveFile);
+            var json = File.ReadAllText(saveFile, Encoding.UTF8);
             var data = Newtonsoft.Json.JsonConvert.DeserializeObject<SiteSignData>(json);
             return data;
         }
@@ -562,7 +609,7 @@ namespace WebBookManage.Common
             data.MESSAGE.SiteSign.Insert(index, sign);
             //var setting = new Newtonsoft.Json.JsonSerializerSettings() { Formatting = Newtonsoft.Json.Formatting.Indented };
             var json = JsonConvert.SerializeObject(data);
-            CommonHelper.SaveToFile(@"SiteSign.json", json);
+            CommonHelper.SaveToFile(@"SiteSign.json", json, Encoding.UTF8);
         }
 
         /// <summary>
@@ -757,11 +804,51 @@ namespace WebBookManage.Common
             //保存为json文件
 
             content = CommonHelper.HtmlToText(content);
-            
+
             //content = Regex.Replace(content, @"<\s*/p>", "\r\n", RegexOptions.IgnoreCase);
             //content = Regex.Replace(content, @"<br\s*/>", "\r\n", RegexOptions.IgnoreCase);
             //content = Regex.Replace(content, @"&nbsp;", " ", RegexOptions.IgnoreCase);
             //content = Regex.Replace(content, @"\t", "", RegexOptions.IgnoreCase);
+            CommonHelper.SaveToFile(saveFileName, content, Encoding.UTF8);
+
+            return Path.GetFullPath(saveFileName);
+        }
+
+        public string SaveChartsContentToJson(ref NovelContent menu, ref string downLoadMsg, bool skipExist = true)
+        {
+            //string saveFileName = string.Format(FILE_PATH_CHAPTER_MODEL, menu.NovelID, menu.Id);
+            string saveFileName = GetChapterFileName(SAVE_TYPE, menu.NovelID, menu.Id, true);
+            saveFileName = saveFileName +"-"+ menu.Title;
+            //跳过已下载的章节
+            if (skipExist && File.Exists(saveFileName))
+            {
+                downLoadMsg = "已跳过";
+                return string.Format("已跳过 《{0}》", menu.Title);
+            }
+            string html = CommonHelper.GetHtml(menu.ComeFrom);
+            var sign = GetSiteSign(menu.ComeFrom);
+            if (sign == null)
+            {
+                downLoadMsg = string.Format("未维护章节标志 《{0}》", menu.Title);
+                return string.Format("未维护章节标志 《{0}》", menu.Title);
+            }
+            string content = CommonHelper.GetValue(html, sign.ContentStart, sign.ContentEnd);
+            content = Regex.Replace(content, @"<script[^>]*?>.*?</script>", "", RegexOptions.IgnoreCase);
+
+            if (html.Contains("操作超时") && content.Length == 0)
+            {
+                downLoadMsg = "操作超时";
+                content = "操作超时";
+                Console.WriteLine(string.Format("操作超时 - > {0}-{1}", menu.Id, menu.Title));
+            }
+
+            menu.DownDate = DateTime.Now;
+            menu.DownTime = DateTime.Now;
+            menu.WordNums = content.Length;
+
+            //保存为json文件
+            content = CommonHelper.HtmlToText(content);
+            content = "\r\n\r\n" + menu.Title + "\r\n\r\n" + content;
             CommonHelper.SaveToFile(saveFileName, content, Encoding.UTF8);
 
             return Path.GetFullPath(saveFileName);
@@ -835,7 +922,7 @@ namespace WebBookManage.Common
         public bool IsDownLoad(string novelID, int menuId)
         {
             string fileName = GetChapterFileName(SAVE_TYPE, novelID, menuId);
-            
+
             return File.Exists(fileName);
         }
 
@@ -914,7 +1001,7 @@ namespace WebBookManage.Common
                 }
                 CommonHelper.CreateDirectory(string.Format(@"txt", ""));
                 string fileName = string.Format(@"txt\{0}.txt", novel.NovelName);
-                CommonHelper.SaveToFile(fileName, txtBuilder.ToString());
+                CommonHelper.SaveToFile(fileName, txtBuilder.ToString(), Encoding.UTF8);
                 return Path.GetFullPath(fileName);
             }
             return "";
@@ -926,7 +1013,7 @@ namespace WebBookManage.Common
         /// <param name="saveType"></param>
         /// <param name="novelID"></param>
         /// <returns></returns>
-        public string GetListFileName(SaveType saveType, string novelID)
+        public string GetListFileName(SaveType saveType, string novelID, bool isCharts = false)
         {
             string fileName = string.Empty;
             switch (saveType)
@@ -943,6 +1030,24 @@ namespace WebBookManage.Common
                 default:
                     break;
             }
+            if (isCharts)
+            {
+
+                switch (saveType)
+                {
+                    case SaveType.Html:
+                        fileName = string.Format(FILE_PATH_LIST_MODEL, novelID); ;
+                        break;
+                    case SaveType.Txt:
+                        fileName = string.Format(FILE_PATH_CHARTS_LIST_JSON, novelID);
+                        break;
+                    case SaveType.Json:
+                        fileName = string.Format(FILE_PATH_CHARTS_LIST_JSON, novelID);
+                        break;
+                    default:
+                        break;
+                }
+            }
             return fileName;
         }
 
@@ -953,7 +1058,7 @@ namespace WebBookManage.Common
         /// <param name="novelID"></param>
         /// <param name="menuId"></param>
         /// <returns></returns>
-        public string GetChapterFileName(SaveType saveType, string novelID, int menuId)
+        public string GetChapterFileName(SaveType saveType, string novelID, int menuId, bool isCharts = false)
         {
             string fileName = string.Empty;
             switch (saveType)
@@ -970,11 +1075,30 @@ namespace WebBookManage.Common
                 default:
                     break;
             }
+            if (isCharts)
+            {
+
+                switch (saveType)
+                {
+                    case SaveType.Html:
+                        fileName = string.Format(FILE_PATH_CHAPTER_MODEL, novelID, menuId);
+                        break;
+                    case SaveType.Txt:
+                        fileName = string.Format(FILE_PATH_CHARTS_CHAPTER_JSON, novelID, menuId);
+                        break;
+                    case SaveType.Json:
+                        fileName = string.Format(FILE_PATH_CHARTS_CHAPTER_JSON, novelID, menuId);
+                        break;
+                    default:
+                        break;
+                }
+            }
             return fileName;
         }
     }
 
-    public enum SaveType {
+    public enum SaveType
+    {
         Html = 0,
         Txt = 1,
         Json = 2

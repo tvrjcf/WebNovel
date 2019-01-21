@@ -1,7 +1,7 @@
 ﻿<html>
 <head>
     <meta charset="UTF-8">
-    <title>书籍编辑</title>
+    <title>正文标志管理</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
@@ -67,84 +67,26 @@
                 <legend>基本信息</legend>
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">小说名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="NovelName" name="NovelName" required placeholder="小说名称" autocomplete="off" class="layui-input" />
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <!--<label class="layui-form-label"></label>-->
-                        <div class="layui-input-inline">
-                            <input type="text" id="NovelID" name="NovelID" placeholder="ID" autocomplete="off" class="layui-input" disabled />
-                        </div>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">目录网址</label>
+                        <label class="layui-form-label">网站名称</label>
                         <div class="layui-input-inline" style="width:405px;">
-                            <input type="text" id="ListUrl" name="ListUrl" placeholder="目录网址" autocomplete="off" class="layui-input" />
+                            <input type="text" id="name" name="name" required placeholder="网站名称" autocomplete="off" class="layui-input" />
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <button type="button" class="layui-btn layui-btn-normal layui-btn-sm btn-http-change" title="http/https切换"><i class="layui-icon">&#xe64c;</i></button>
-                        <button type="button" class="layui-btn layui-btn-warm layui-btn-sm btn-sign-get" title="取出正文标志"><i class="layui-icon">&#xe615;</i></button>
-                    </div>
+                    
                 </div>
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">选择分类</label>
-                        <div class="layui-input-inline">
-                            <select id="LB" name="LB">
-                                <option value="">选择分类</option>
-                                <option value="0">青春文学</option>
-                                <option value="1">穿越架空</option>
-                                <option value="2">大数据</option>
-                                <option value="3">悬疑推理</option>
-                                <option value="4">恐怖惊悚</option>
-                            </select>
+                        <label class="layui-form-label">网站地址</label>
+                        <div class="layui-input-inline" style="width:405px;">
+                            <input type="text" id="url" name="url" placeholder="网站地址" autocomplete="off" class="layui-input" />
                         </div>
                     </div>
-                    <div class="layui-inline">
-                        <!--<label class="layui-form-label"></label>-->
-                        <div class="layui-input-inline">
-                            <input type="checkbox" id="checkbox1" name="checkbox1" lay-skin="primary" title="不再更新&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;">
-                        </div>
-                    </div>
+                    
                 </div>
+                
 
             </fieldset>
-            <fieldset class="layui-elem-field">
-                <legend>其他信息</legend>
-                <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">作&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;者</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="Author" name="Author" placeholder="作者" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <!--<label class="layui-form-label"></label>-->
-                        <div class="layui-input-inline">
-                            <input type="checkbox" id="checkbox2" name="checkbox2" lay-skin="primary" title="读取其他信息">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="layui-form-item layui-form-text">
-                    <label class="layui-form-label">内容简介</label>
-                    <div class="layui-input-block" style="width:405px;">
-                        <textarea id="Brief" name="Brief" required placeholder="内容简介" class="layui-textarea"></textarea>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">封面图片</label>
-                    <div class="layui-input-block" style="width:405px;">
-                        <input type="text" id="BookImg" name="BookImg" placeholder="封面图片地址" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-
-            </fieldset>
+            
             <fieldset class="layui-elem-field">
                 <legend>正文标志</legend>
                 <div class="layui-form-item">
@@ -276,13 +218,13 @@
     </div>
 
     <script src="./layui/layui.all.js" type="text/javascript"></script>
-    <script src="./js/book.edit.js" type="text/javascript"></script>
+    <script src="./js/book.sign.js" type="text/javascript"></script>
     <script>
-                                                                //var $ = layui.$ //重点处;
-                                                                //var layer = layui.layer;
-                                                                //var form = layui.form;
-                                                                //var table = layui.table;
-                                                                //var element = layui.element;
+                                                        //var $ = layui.$ //重点处;
+                                                        //var layer = layui.layer;
+                                                        //var form = layui.form;
+                                                        //var table = layui.table;
+                                                        //var element = layui.element;
     </script>
 </body>
 

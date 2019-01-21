@@ -4,6 +4,7 @@ var selectType = "all";
 var bookTypes = [];
 var books = [];
 var downLoadData = [];
+var chartsData = [];
 
 function layerAlert(msg) {
     layer.alert(msg, {
@@ -23,15 +24,203 @@ function BindMenuEvent() {
         //if (key == undefined) return;
         switch (key) {
             case undefined:
-            case "":
+            case "main":
+                $("#main").show();
+                $("#charts").hide();
+                break;
+            case "charts":
+                $("#main").hide();
+                $("#charts").show();
+                //ShowChartsWin(null, '榜单下载');
                 break;
             case "addbook":
-                ShowEditdWin({ NovelID: 0 }, '添加书籍');
+                ShowEditdWin({ NovelID: 0, ListUrl:"" }, '添加书籍');
+                break;
+            case "downcharts":                
+                //alert(GetChartsList());
+                ShowChartsWin(null, '榜单下载');
                 break;
             default:
         }
 
     });
+
+    $("#btn_searchChatrs").on("click", function () {
+        SearchCharts();
+    });
+    $("#btn_siteSign").on("click", function () {
+        var chartsUrl = $("#chartsUrl").val();
+        ShowChartsWin({ url: chartsUrl }, "网站标志设置");
+    });
+}
+
+function Resize() {
+    //alert('resize');
+    table.reload('chartsList', { height: 'full-140' });
+}
+
+function InitChartsTable() {
+    table.render({
+        id: 'chartsList'
+        , elem: '#chartsList'
+        , toolbar: '#toolbar'
+        , cols: [[ //标题栏
+            { type: 'numbers' }
+            , { type: 'checkbox' }
+            , { field: 'NovelID', title: 'ID', width: 70, sort: true }
+            , { field: 'NovelName', title: '名称', width: 200 }       //, templet: '#TitleTpl'
+            //, { field: 'Volume', title: '分卷名', minWidth: 150 }
+            , { field: 'ListUrl', title: '地址', width: 350 }
+            , { field: 'Info', title: '状态', width: 100, sort: true }
+            //, { field: 'experience', title: '积分', width: 80, sort: true }
+        ]]
+        , data: []
+        , size: 'sm'    //表格尺寸
+        //, skin: 'line'  //表格风格(line、row、nob)
+        , even: true    //隔行背景
+        , page: true    //是否显示分页
+        , limits: [100, 200, 500, 1000]
+        , limit: 500 //每页默认显示的数量
+        , height: 'full-140'
+
+    });
+    table.on('toolbar(update)', function (obj) {
+        var checkStatus = table.checkStatus(obj.config.id);
+        switch (obj.event) {
+            case 'getCheckData':
+                var data = checkStatus.data;
+                layerAlert(JSON.stringify(data));
+                break;
+            case 'getCheckLength':
+                var data = checkStatus.data;
+                layerMsg('选中了：' + data.length + ' 个');
+                break;
+            case 'isAll':
+                layerMsg(checkStatus.isAll ? '全选' : '未全选');
+                break;
+            case 'search':
+                //layerMsg('搜索');
+                //SearchCharts()
+                break;
+            case 'reload':
+                BindData(chartsData);
+                layerMsg('数据已刷新');
+                break;
+            case 'downLoad':
+                var data = checkStatus.data;
+                downLoadCharts(data);
+                break;
+            case 'delete':
+                var data = checkStatus.data;
+                if (data.length == 0) {
+                    layerMsg("没有要选中任何数据");
+                    return;
+                }
+                layer.confirm('确认要删除[' + data.length + ' ]行数据么?'
+                    , {
+                        //offset: '100px',
+                        title: '章节删除', icon: 3
+                    }
+                    , function (index) {
+                        var ids = [];
+                        $(data).each(function (i, item) {
+                            $(chartsData).each(function (j, down) {
+                                if (item.ListUrl == down.ListUrl) {
+                                    chartsData.splice(j, 1);
+                                    if (item.Id != 0)
+                                        ids.push(item.Id);
+                                }
+                            });
+                        });
+                        //parent.DelNovelContents(ids.join(','));
+                        //parent.DelNovelContents(JSON.stringify(ids));
+                        layer.close(index);
+                        BindData(chartsData);
+                    });
+                break;
+        };
+    });
+}
+
+function downLoadCharts(data) {
+
+    if (data.length == 0) {
+        layerMsg("没有要选中任何数据");
+        return;
+    }
+    layer.confirm('确认要下载[' + data.length + ' ]行数据么?'
+        , {
+            //offset: '100px',
+            title: '榜单下载', icon: 3
+        }
+        , function (index) {
+            //layer.close(index);
+            layerMsg('开始下载...');
+            $(data).each(function (j, down) {
+                //if (item.Key == down.Id) {
+                down.Info = "";
+                //}
+            });
+            SetProgressValue(0);
+            var ret = DownLoadCharts(JSON.stringify(data));
+            if (ret == "-1") {
+                layerMsg('下载已取消!'); return;
+            } else if (ret == "0") {
+                var value = 0;
+                var setInterval = self.setInterval(function () {
+                    value = UpdateProgressValue();
+                    SetProgressValue(value);
+                    if (value >= 100) {
+                        window.clearInterval(setInterval);
+                        layerAlert('下载完成!');
+                        //var erro = JSON.parse(GetErroList());
+                        //$(erro).each(function (i, item) {
+
+                        //    $(data).each(function (j, down) {
+                        //        if (item.Key == down.Id) {
+                        //            down.Info = item.Message;
+                        //        }
+                        //    });
+                        //    //layerMsg(item.Key + "->" + item.Message); return false;
+                        //});
+                        //BindChartsData(chartsData);
+                    }
+                }, 500)
+            } else {
+                layerAlert(ret);
+            }
+        });
+}
+
+/**
+ * 搜索榜单
+ * */
+function SearchCharts() {
+    var chartsUrl = $("#chartsUrl").val();
+    var hrefPattern = $("#hrefPattern").val();
+    if (chartsUrl.length == 0) chartsUrl = "http://www.hebao22.com/qitaleixing/";
+    if (hrefPattern.length == 0) hrefPattern = "/book/\\d+/";
+
+    var sign = JSON.parse(GetSiteSign(chartsUrl));
+    if (sign && sign.url) {
+    } else {
+        layerMsg("还未收录过该站点标志信息");
+        ShowChartsWin({ url:chartsUrl }, "网站标志设置");
+        return false;
+    }
+
+    var result = JSON.parse(parent.GetChartsList(chartsUrl, hrefPattern));
+    if (!result.Success) {
+        layerAlert(result.Message); return false;
+    }
+    chartsData = JSON.parse(result.Data);
+    //table.reload('chartsList', { data: chartsData });
+    BindChartsData(chartsData);
+}
+
+function BindChartsData(data) {
+
+    table.reload('chartsList', { data: data });
 }
 
 /**
@@ -382,11 +571,52 @@ function ShowEditdWin(data, title) {
 }
 
 /**
+ * 显示编辑页面
+ * @param {object} data 编辑对象
+ * @param {string} title 标题   
+ */
+function ShowChartsWin(data, title) {
+    //var result = JSON.parse(GetChartsList());
+    //if (!result.Success) {
+    //    layerAlert(result.Message); return false;
+    //}
+    //localStorage.setItem("charts", result.Data);
+    localStorage.setItem("sitesign", JSON.stringify(data));
+
+    layer.open({
+        type: 2,
+        title: title || 'gq',
+        //offset: '50px',
+        area: ['700px', '470px'],
+        //fixed: false, //不固定
+        maxmin: true,
+        content: 'book_sign.html',
+        //content: $('#downDialog'),
+        //end: function () {
+        //    $('#downDialog').hide();
+        //},
+        success: function (layero, index) {
+            layerOpen = layero;
+        },
+        full: function () {
+            var iframeWin = window[layerOpen.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法
+            iframeWin.Resize()
+        },
+        restore: function () {
+            var iframeWin = window[layerOpen.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法
+            iframeWin.Resize()
+        },
+    });
+}
+
+/**
  * 设置进度值
  * @param {Number} value
  */
 function SetProgressValue(value) {
     element.progress('downLoadProgress', value + "%");
+    if (value != 0) $(".layui-progress").show();
+    else $(".layui-progress").hide();
 }
 
 /**
@@ -505,6 +735,7 @@ $(document).ready(function () {
         BindMenuEvent();
         GetBookTypes();
         GetBooks();
+        InitChartsTable();
     }
     catch (err) {
         //catchCode - 捕获错误的代码块
@@ -518,6 +749,9 @@ $(document).ready(function () {
             layer.closeAll('loading');
         }, 200);
     }
+    $(window).resize(function () {
+        Resize();
+    });
 
     var layer = layui.layer;
     var form = layui.form;

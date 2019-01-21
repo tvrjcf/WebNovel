@@ -76,13 +76,17 @@
             <li class="layui-nav-item">
                 <a href="">个人中心<span class="layui-badge-dot"></span></a>
             </li>-->
-            <li class="layui-nav-item layui-this">
-                <a><img src="./images/Default.png" class="layui-nav-img">管理</a>
+            <li class="nav-main layui-nav-item layui-this">
+                <a key="main"><img src="./images/Default.png" class="layui-nav-img">主页</a>
                 <dl class="layui-nav-child">
                     <dd><a key="addbook">添加书籍</a></dd>
                     <dd><a key="sitesign">网站标志库</a></dd>
+                    <dd><a key="downcharts">榜单下载</a></dd>
                     <!--<dd><a href="javascript:;">退了</a></dd>-->
                 </dl>
+            </li>
+            <li class="nav-charts layui-nav-item" >
+                <a key="charts">榜单下载</a>
             </li>
         </ul>
 
@@ -96,7 +100,7 @@
         <!--<div class="layui-card-body"></div>-->
 
 
-        <div class="full layui-carousel x-admin-carousel x-admin-backlog" lay-anim="" lay-indicator="inside" lay-arrow="none" style="width: 100%;">
+        <div id="main" class="full layui-carousel x-admin-carousel x-admin-backlog" lay-anim="" lay-indicator="inside" lay-arrow="none" style="width: 100%;">
 
             <div class="layui-bg-cyan" style="float:left; width:200px; height:100%;">
                 <ul class="layui-nav layui-bg-cyan layui-nav-tree" lay-filter="bookType" id="bookType">
@@ -229,7 +233,37 @@
 
             </div>
         </div>
+        <div id="charts" class="" style="display:none;">
+            <div class="layui-inline layui-elem-quote" style="width:100%; padding:10px 0;">
+                <div class="layui-input-inline">
+                    <label class="layui-form-label">榜单地址</label>
+                    <input type="text" id="chartsUrl" name="chartsUrl" required placeholder="榜单地址" autocomplete="off" class="layui-input" style="width:250px;" />
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" id="hrefPattern" name="hrefPattern" required placeholder="地址特征(正则)" autocomplete="off" class="layui-input" />
+                </div>
+                <div class="layui-input-inline">
+                    <button id="btn_searchChatrs" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="search" title="搜索"><i class="layui-icon">&#xe615;</i></button>
+                    <button id="btn_siteSign" class="layui-btn layui-btn-sm layui-btn-warm" lay-event="search" title="标志管理"><i class="layui-icon">&#xe615;</i>标志管理</button>
+                </div>
+            </div>
+            <div style="padding:0 5px; margin-top:-18px;">
+                <table id="chartsList" class="" lay-filter="update"></table>
+                <div class="layui-progress" style="display:none;" lay-filter="downLoadProgress">
+                    <!--lay-showpercent="true"-->
+                    <div class="layui-progress-bar layui-bg-red lay-percent='0' "></div>
+                </div>
 
+                <script type="text/html" id="toolbar">
+                    <div class="layui-btn-container">
+                        <!--<button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="reload" title="刷新"><i class="layui-icon">&#xe669;</i>刷新</button>-->
+                        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="downLoad" title="下载"><i class="layui-icon">&#xe601;</i>下载</button>
+                        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete" title="删除"><i class="layui-icon">&#xe640;</i>删除</button>
+
+                    </div>
+                </script>
+            </div>
+        </div>
     </div>
     <div style="display:none;">
         <div id="edit-tool layui-anim layui-anim-scale">
