@@ -9,6 +9,7 @@ var chartsData = [];
 function layerAlert(msg) {
     layer.alert(msg, {
         //offset: '100px'
+        //maxmin: true
     });
 }
 function layerMsg(msg) {
@@ -16,11 +17,15 @@ function layerMsg(msg) {
         //offset: '100px'
     });
 }
-
+//layer.open({
+//    type: 2,
+//    content: '33',
+//    maxmin: true
+//});
 function BindMenuEvent() {
     $("#menu a").bind("click", function () {
         var key = $(this).attr("key");
-        layerMsg(key);
+        //layerMsg(key);
         //if (key == undefined) return;
         switch (key) {
             case undefined:
@@ -227,6 +232,7 @@ function BindChartsData(data) {
  * 查询书籍类型 
  */
 function GetBookTypes() {
+
     bookTypes = JSON.parse(GetNovelTypes());
     $("#bookType").html("");
     $("#bookType").append("<li class='layui-nav-item layui-this' key='all'><a title='全部'>全部</a></li>");
@@ -262,7 +268,7 @@ function GetBookTypes() {
 
 
     });
-
+    
 }
 
 /**
@@ -732,10 +738,16 @@ $(document).ready(function () {
 
     try {
         //tryCode - 尝试执行代码块
+
+        Concurrent.Thread.create(function () {
+
         BindMenuEvent();
         GetBookTypes();
         GetBooks();
         InitChartsTable();
+
+        });
+        //alert(3);
     }
     catch (err) {
         //catchCode - 捕获错误的代码块

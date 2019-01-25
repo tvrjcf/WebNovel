@@ -36,6 +36,7 @@ namespace WebBookReader.Web
         [JSFunctin]
         public string GetNovelTypes()
         {
+            //Thread.Sleep(4000);
             var data = BH.GetNovelTypes().ToJson(false, false).Replace("null", "\"\"");
             return data;
         }
@@ -73,14 +74,16 @@ namespace WebBookReader.Web
             var result = new Result();
             try
             {
-                var novel = JsonHelper.ToEntity<Novel>(data);
+                var novel = JsonConvert.DeserializeObject<Novel>(data);
+                //var novel = JsonHelper.ToEntity<Novel>(data);
                 if (novel.ListUrl.Length == 0)
                     throw new ValidationException("网站地址不能为空");
                 var save = BH.SaveNovel(novel);
 
                 //保存正文标记
                 string rootUrl = CommonHelper.GetWebRootUrl(novel.ListUrl);
-                var sign = JsonHelper.ToEntity<SiteSign>(data);
+                //var sign = JsonHelper.ToEntity<SiteSign>(data);
+                var sign = JsonConvert.DeserializeObject<SiteSign>(data);
                 sign.name = rootUrl;
                 sign.url = rootUrl;
                 BH.SignToJson(sign);
@@ -240,9 +243,10 @@ namespace WebBookReader.Web
         private int TotalCount = 0;
         private string chapterModel = string.Empty;
         private string listModel = string.Empty;
-        private Novel novel;
+        private Novel currNovel;
         private List<NovelContent> menuList;    //章节列表
         private List<Result> erroList;    //下载异常列表
+        private string[] arrContent;    //章节内容数据
         [JSFunctin]
         public string DownLoadContent(string data)
         {
@@ -258,26 +262,30 @@ namespace WebBookReader.Web
                     return "-1";
                 chapterModel = BH.GetChapterModel();
                 var novelId = downList[0].NovelID;
-                novel = BH.GetNovel(novelId);
+                currNovel = BH.GetNovel(novelId);
                 menuList = BH.GetNovelContents(novelId).ToList<NovelContent>();
                 erroList = new List<Result>();
 
                 #region 生成章节列表            
-                if (MessageBox.Show("是否生成章节目录?", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
-                {
-                    CommonHelper.CreateDirectory(string.Format(@"chm\{0}", novel.NovelID));
-                    listModel = BH.GetMenuListModel();
+                //if (MessageBox.Show("是否生成章节目录?", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                //{
+                //    CommonHelper.CreateDirectory(string.Format(@"chm\{0}", currNovel.NovelID));
+                //    listModel = BH.GetMenuListModel();
 
-                    BH.SaveNovelListToHtml(novel, menuList, listModel);
-                    if (MessageBox.Show("章节目录生成完成,是否继续下载章节内容?", "提示", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-                    {
-                        return "-1";
-                    };
-                }
-                else
-                {
-                    //return "-1";
-                }
+                //    BH.SaveNovelListToHtml(currNovel, menuList, listModel);
+                //    if (MessageBox.Show("章节目录生成完成,是否继续下载章节内容?", "提示", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                //    {
+                //        return "-1";
+                //    };
+                //}
+                //else
+                //{
+                //    //return "-1";
+                //}
+                CommonHelper.CreateDirectory(string.Format(@"chm\{0}", currNovel.NovelID));
+                listModel = BH.GetMenuListModel();
+                BH.SaveNovelListToHtml(currNovel, menuList, listModel);
+                Console.WriteLine(string.Format("已生成[{0}]目录", currNovel.NovelName));
 
                 #endregion
 
@@ -305,7 +313,7 @@ namespace WebBookReader.Web
                 var dlmsg = string.Empty;
                 var prior = BH.GetPrior(menuList, menu.Id);
                 var next = BH.GetNext(menuList, menu.Id);
-                var result = BH.SaveNovelContentToHtml(novel, ref menu, chapterModel, prior, next, ref dlmsg, true);
+                var result = BH.SaveNovelContentToHtml(currNovel, ref menu, chapterModel, prior, next, ref dlmsg, true);
 
                 if (!string.IsNullOrEmpty(dlmsg))
                     throw new ValidationException(dlmsg);
@@ -343,27 +351,30 @@ namespace WebBookReader.Web
                     CommonHelper.CreateDirectory(string.Format(@"charts\{0}", novel.NovelID));
                     var html = CommonHelper.GetHtml(novel.ListUrl);
                     novel.ChapterList = BH.GetMenuList(html, novel.NovelID, novel.ListUrl);
-
+                    int tepmId = 1;
+                    foreach (var item in novel.ChapterList)
+                    {
+                        item.Id = tepmId++;
+                    }
                     CompletedCount = 0;
                     TotalCount = novel.ChapterList.Count;
+                    arrContent = new string[TotalCount];
                     if (TotalCount == 0)
                         return "-1";
                     chapterModel = BH.GetChapterModel();
                     var novelId = novel.NovelID;
-                    //novel = BH.GetNovel(novelId);
+                    currNovel = novel;
                     menuList = novel.ChapterList;
                     erroList = new List<Result>();
 
                     #region 生成章节列表
-                    var saveFileName = string.Format(@"charts\{0}\list.json", novel.NovelID);
+                    var saveFileName = string.Format(@"charts\{0}\0 list", novel.NovelID, novel.NovelName);
                     CommonHelper.SaveToFile(saveFileName, JsonHelper.ToJson(novel), Encoding.UTF8);
                     Console.WriteLine(string.Format("已生成[{0}]目录", novel.NovelName));
                     #endregion
 
-                    int tepmId = 0;
                     foreach (var item in novel.ChapterList)
                     {
-                        item.Id = tepmId++;
                         ThreadPool.QueueUserWorkItem(new WaitCallback(Thread_DownLoadChartsContent), item);
                     }
                 }
@@ -379,10 +390,11 @@ namespace WebBookReader.Web
         private void Thread_DownLoadChartsContent(object o)
         {
             var menu = o as NovelContent;
+            var dlmsg = string.Empty;
+            var content = string.Empty;
             try
             {
-                var dlmsg = string.Empty;
-                var result = BH.SaveChartsContentToJson(ref menu, ref dlmsg, true);
+                var result = BH.SaveChartsContentToJson(ref menu, ref content, ref dlmsg, true);
 
                 if (!string.IsNullOrEmpty(dlmsg))
                     throw new ValidationException(dlmsg);
@@ -397,6 +409,13 @@ namespace WebBookReader.Web
             {
                 Interlocked.Increment(ref CompletedCount);
                 //CompleteEvent(menu);
+                arrContent[menu.Id - 1] = content;
+                if (CompletedCount == TotalCount)
+                {
+                    //生成txt
+                    var saveFileName = string.Format(@"charts\{0}\{1}.txt", currNovel.NovelID, currNovel.NovelName);
+                    CommonHelper.SaveToFile(saveFileName, string.Join("\r\n", arrContent), Encoding.UTF8);
+                }
             }
         }
 
@@ -472,7 +491,8 @@ namespace WebBookReader.Web
             var result = new Result();
             try
             {
-                var sign = JsonHelper.ToEntity<SiteSign>(data);
+                //var sign = JsonHelper.ToEntity<SiteSign>(data);
+                var sign = JsonConvert.DeserializeObject<SiteSign>(data);
                 if (sign.url.Length == 0)
                     throw new ValidationException("网站地址不能为空");
                 string rootUrl = CommonHelper.GetWebRootUrl(sign.url);
@@ -512,8 +532,9 @@ namespace WebBookReader.Web
         public object Key;
     }
 
-    public class ThreadArgs {
-        public object arg1 { get;set; }
+    public class ThreadArgs
+    {
+        public object arg1 { get; set; }
         public object arg2 { get; set; }
     }
 }

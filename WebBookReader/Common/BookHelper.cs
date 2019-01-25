@@ -779,6 +779,7 @@ namespace WebBookManage.Common
             }
             string html = CommonHelper.GetHtml(menu.ComeFrom);
             string content = CommonHelper.GetValue(html, novel.ContentStart, novel.ContentEnd);
+            content = Regex.Replace(content, novel.NeedDelStr, "", RegexOptions.IgnoreCase);
             content = Regex.Replace(content, @"<script[^>]*?>.*?</script>", "", RegexOptions.IgnoreCase);
 
             if (html.Contains("操作超时") && content.Length == 0)
@@ -814,11 +815,11 @@ namespace WebBookManage.Common
             return Path.GetFullPath(saveFileName);
         }
 
-        public string SaveChartsContentToJson(ref NovelContent menu, ref string downLoadMsg, bool skipExist = true)
+        public string SaveChartsContentToJson(ref NovelContent menu, ref string content, ref string downLoadMsg, bool skipExist = true)
         {
             //string saveFileName = string.Format(FILE_PATH_CHAPTER_MODEL, menu.NovelID, menu.Id);
             string saveFileName = GetChapterFileName(SAVE_TYPE, menu.NovelID, menu.Id, true);
-            saveFileName = saveFileName +"-"+ menu.Title;
+            saveFileName = saveFileName +" "+ menu.Title;
             //跳过已下载的章节
             if (skipExist && File.Exists(saveFileName))
             {
@@ -832,7 +833,8 @@ namespace WebBookManage.Common
                 downLoadMsg = string.Format("未维护章节标志 《{0}》", menu.Title);
                 return string.Format("未维护章节标志 《{0}》", menu.Title);
             }
-            string content = CommonHelper.GetValue(html, sign.ContentStart, sign.ContentEnd);
+            content = CommonHelper.GetValue(html, sign.ContentStart, sign.ContentEnd);
+            content = Regex.Replace(content, sign.NeedDelStr, "", RegexOptions.IgnoreCase);
             content = Regex.Replace(content, @"<script[^>]*?>.*?</script>", "", RegexOptions.IgnoreCase);
 
             if (html.Contains("操作超时") && content.Length == 0)

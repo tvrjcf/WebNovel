@@ -109,7 +109,16 @@ function Init() {
                                 SetProgressValue(value);
                                 if (value >= 100) {
                                     window.clearInterval(setInterval);
-                                    layerAlert('下载完成!');
+                                    layer.alert('下载完成!', {
+                                        content: '下载完成'
+                                        , btn: ['确定', '生成TXT']
+                                        , yes: function (index, layero) {
+                                            
+                                        }
+                                        , btn2: function (index, layero) {
+                                            parent.CreateTXTBook(data[0].NovelID, "");
+                                        }
+                                    });
                                     var erro = JSON.parse(parent.GetErroList());
                                     $(erro).each(function (i, item) {
 
