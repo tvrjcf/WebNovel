@@ -62,7 +62,7 @@ namespace Canvas
             ltf.MessageLoop();
         }
 
-        WebBookManage.Common.BookHelper BH = new WebBookManage.Common.BookHelper();
+        BR.Common.BookHelper BH = new BR.Common.BookHelper();
         public long GetNovelTypes(IntPtr es)
         {
             var data = BH.GetNovelTypes().ToJson(false, false).Replace("null", "\"\"");
@@ -75,7 +75,7 @@ namespace Canvas
             //var dt = BH.GetNovels().ToDataTable();
             //var data = JsonConvert.SerializeObject(dt, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Include}).Replace("null", "\"\"");
             //var data = dt.ToJson(false, false).Replace("null", "\"\"");
-            //var book = new WebBookManage.Model.Novel(); 
+            //var book = new BR.Model.Novel(); 
             // var str = @"[{'NovelID': '000001','NeedDelUrl':'', 'NovelName': '莽荒纪-青帝文学网','Author': '','bIsEnd': '0','ListUrl': 'http://www.qingdiba.com/read/294/index.html','ListStart': '</h2>','ListEnd': '<SPAN id=admu_6>','UrlChange': '','ContentStart': '<div id=content>','ContentEnd': '<br>','NeedDelStr': '[[标题]]||()提供本文最新章节在线阅读!','LB': '07','Displayorder': 10,'VolumeStart': '','VolumeEnd': '','Brief': '','BookImg': ''}]";
             return ltf.String2JsValue(es, data);    //"[]"
         }

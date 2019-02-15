@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace WebBookManage.Common
+namespace BR.Common
 {
     public static class DoubleBufferListView
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WebBookManage.Common
+namespace BR.Common
 {
     public class RegexConfig
     {

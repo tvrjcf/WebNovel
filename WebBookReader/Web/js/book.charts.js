@@ -40,7 +40,7 @@ function Init() {
         //, skin: 'line'  //表格风格(line、row、nob)
         , even: true    //隔行背景
         , page: true    //是否显示分页
-        , limits: [100, 200, 500, 1000]
+        , limits: [100, 200, 500, 1000, 2000, 5000, 10000]
         , limit: 500 //每页默认显示的数量
         , height: 'full-40'
 

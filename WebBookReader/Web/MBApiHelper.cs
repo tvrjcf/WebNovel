@@ -8,19 +8,22 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using WebBookManage.Common;
-using WebBookManage.Model;
+using BR.Common;
+using BR.Model;
 
-namespace WebBookReader.Web
+namespace BR.Web
 {
     public class MBApiHelper
     {
         BookHelper BH = null;
-        BlinkBrowser MB = null;
-        public MBApiHelper(BlinkBrowser mb)
+        //BlinkBrowser MB = null;
+        public MBApiHelper()
         {
             BH = new BookHelper();
-            MB = mb;
+        }
+        public MBApiHelper(BlinkBrowser mb) : base()
+        {
+            //MB = mb;
         }
 
         [JSFunctin]
@@ -36,9 +39,16 @@ namespace WebBookReader.Web
         [JSFunctin]
         public string GetNovelTypes()
         {
-            //Thread.Sleep(4000);
-            var data = BH.GetNovelTypes().ToJson(false, false).Replace("null", "\"\"");
-            return data;
+            try
+            {
+                var data = BH.GetNovelTypes().ToJson(false, false).Replace("null", "\"\"");
+                return data;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.GetBaseException().Message);
+            }
+            return "";
         }
 
         /// <summary>

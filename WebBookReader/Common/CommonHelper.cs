@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using WebBookReader.Properties;
+using BR.Properties;
 
-namespace WebBookManage.Common
+namespace BR.Common
 {
     public static class CommonHelper
     {

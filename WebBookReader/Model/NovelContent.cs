@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebBookManage.Model
+namespace BR.Model
 {
     public class NovelContent : CYQ.Data.Orm.OrmBase
     {

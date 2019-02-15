@@ -12,9 +12,9 @@ using System.Security.Policy;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using WebBookManage.Model;
+using BR.Model;
 
-namespace WebBookManage.Common
+namespace BR.Common
 {
     public class BookHelper
     {
@@ -45,6 +45,8 @@ namespace WebBookManage.Common
                 //setting.Converters.Add(new DomainJsonConverter());
                 return setting;
             };
+            AppConfig.SetConn("Conn", @"Provider=Microsoft.Jet.OLEDB.4.0; Data Source=db\pim.mdb");// providerName = "System.Data.OleDb";
+            Console.WriteLine("new BookHelper()");
         }
 
         /// <summary>
@@ -283,7 +285,7 @@ namespace WebBookManage.Common
             string rootUrl = listUrl.Substring(0, listUrl.IndexOf("/", 8)) + "/";
 
             var list = new List<NovelContent>();
-            string prttern = "<a(\\s+(href=\"(?<url>([^\"])*)\"|'([^'])*'|\\w+=\"(([^\"])*)\"|'([^'])*'))+>(?<text>(.*?))</a>";
+            string prttern = "<a(\\s+(href\\s*=\"(?<url>([^\"])*)\"|'([^'])*'|\\w+=\"(([^\"])*)\"|'([^'])*'))+>(?<text>(.*?))</a>";
             var maths = Regex.Matches(html, prttern);
 
             for (int i = 0; i < maths.Count; i++)

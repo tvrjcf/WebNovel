@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WebBookManage.Model
+namespace BR.Model
 {
     public class Novel : CYQ.Data.Orm.OrmBase
     {

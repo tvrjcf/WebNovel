@@ -1,4 +1,4 @@
-﻿namespace WebBookManage.Common
+﻿namespace BR.Common
 {
     public enum EbookType
     {

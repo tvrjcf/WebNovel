@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WebBookManage.Model;
+using BR.Model;
 
-namespace WebBookManage.Common
+namespace BR.Common
 {
     public class SysSetting
     {

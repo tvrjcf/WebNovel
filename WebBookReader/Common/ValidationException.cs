@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace WebBookManage.Common
+namespace BR.Common
 {
     public class ValidationException : ApplicationException
     {

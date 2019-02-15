@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WebBookManage.Model
+namespace BR.Model
 {
     public class ThemeModel
     {

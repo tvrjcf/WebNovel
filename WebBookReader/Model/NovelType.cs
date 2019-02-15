@@ -1,4 +1,4 @@
-﻿namespace WebBookManage.Model
+﻿namespace BR.Model
 {
     public class NovelType : CYQ.Data.Orm.OrmBase
     {
