@@ -24,6 +24,7 @@ namespace BR.Web
         public MBApiHelper(BlinkBrowser mb) : base()
         {
             //MB = mb;
+            BH = new BookHelper();
         }
 
         [JSFunctin]

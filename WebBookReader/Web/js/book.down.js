@@ -29,9 +29,9 @@ function Init() {
             { type: 'numbers' }
             , { type: 'checkbox' }
             , { field: 'Id', title: 'ID', width: 70, sort: true }
-            , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl' }
+            , { field: 'Title', title: '标题', width: 200, templet: '#TitleTpl',  sort: true}
             //, { field: 'Volume', title: '分卷名', minWidth: 150 }
-            , { field: 'ComeFrom', title: '地址', width: 350 }
+            , { field: 'ComeFrom', title: '地址', width: 350, sort: true}
             , { field: 'Info', title: '状态', width: 100, sort: true}
             //, { field: 'experience', title: '积分', width: 80, sort: true }
         ]]
